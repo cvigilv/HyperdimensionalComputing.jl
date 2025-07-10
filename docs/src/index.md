@@ -2,13 +2,26 @@
 CurrentModule = HyperdimensionalComputing
 ```
 
-# HyperdimensionalComputing
+# HyperdimensionalComputing.jl
 
 Documentation for [HyperdimensionalComputing](https://github.com/dimiboeckaerts/HyperdimensionalComputing.jl).
 
-```@index
+## Overview
+
+HyperdimensionalComputing.jl provides...
+
+## Manual
+
+```@contents
+Pages = [
+    "api.md",
+    "examples.md"
+]
+Depth = 2
 ```
 
-```@autodocs
-Modules = [HyperdimensionalComputing]
+## Index
+
+```@index
+Pages = ["index.md"]
 ```
