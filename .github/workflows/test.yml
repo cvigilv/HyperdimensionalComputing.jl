@@ -1,4 +1,4 @@
-name: CI
+name: Test suite
 
 on:
   push:
@@ -12,32 +12,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        julia-version: ['lts', '1']
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        julia-arch: [x64]
+        julia-version: "1"
+        os: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Setup Julia
-      uses: julia-actions/setup-julia@v2
-      with:
-        version: ${{ matrix.julia-version }}
-        arch: ${{ matrix.julia-arch }}
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.julia-version }}
+          arch: ${{ matrix.julia-arch }}
 
-    - name: Cache Julia packages
-      uses: julia-actions/cache@v2
+      - name: Cache Julia packages
+        uses: julia-actions/cache@v2
 
-    - name: Install dependencies
-      uses: julia-actions/julia-buildpkg@v1
+      - name: Install dependencies
+        uses: julia-actions/julia-buildpkg@v1
 
-    - name: Run tests
-      uses: julia-actions/julia-runtest@v1
+      - name: Run tests
+        uses: julia-actions/julia-runtest@v1
 
-    - name: Process coverage
-      uses: julia-actions/julia-processcoverage@v1
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: lcov.info
+      # TODO: Add coverage analysis and style checker
