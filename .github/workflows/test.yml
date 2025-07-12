@@ -1,0 +1,30 @@
+name: Test suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: '1'
+
+    - name: Cache Julia packages
+      uses: julia-actions/cache@v2
+
+    - name: Install dependencies
+      uses: julia-actions/julia-buildpkg@v1
+
+    - name: Run tests
+      uses: julia-actions/julia-runtest@v1
+
+    # TODO: Add coverage analysis and style checker
