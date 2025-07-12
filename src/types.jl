@@ -19,12 +19,16 @@ TODO:
 
 abstract type AbstractHV{T} <: AbstractVector{T} end
 
+Base.collect(hv::AbstractHV) = hv.v
 Base.sum(hv::AbstractHV) = sum(hv.v)
 Base.size(hv::AbstractHV) = size(hv.v)
 Base.getindex(hv::AbstractHV, i) = hv.v[i]
 Base.similar(hv::T) where {T<: AbstractHV} = T(length(hv)) 
 LinearAlgebra.norm(hv::AbstractHV) = norm(hv.v)
 LinearAlgebra.normalize!(hv::AbstractHV) = hv
+
+get_vector(v::AbstractVector) = v
+get_vector(hv::AbstractHV) = hv.v
 
 # We always provide a constructor with optinal dimensionality (n=10,000 by default) and
 # a method `similar`.
@@ -33,9 +37,11 @@ LinearAlgebra.normalize!(hv::AbstractHV) = hv
 
 struct BipolarHV <: AbstractHV{Int}
     v::BitVector
+    BipolarHV(v::BitVector) = new(v)
 end
 
-BipolarHV(n=10_000) = BipolarHV(bitrand(n))
+BipolarHV(n::Integer=10_000) = BipolarHV(bitrand(n))
+BipolarHV(v::AbstractVector) = BipolarHV(v.>0)
 
 Base.getindex(hv::BipolarHV, i) = hv.v[i] ? 1 : -1
 Base.sum(hv::BipolarHV) = 2sum(hv.v) - length(hv.v)
@@ -62,7 +68,8 @@ struct BinaryHV <: AbstractHV{Bool}
     v::BitVector
 end
 
-BinaryHV(n=10_000) = BinaryHV(bitrand(n))
+BinaryHV(n::Integer=10_000) = BinaryHV(bitrand(n))
+BinaryHV(v::AbstractVector{Bool}) = BinaryHV(BitVector(v))
 
 # `RealHV` contain real numbers, drawn from a distribution
 struct RealHV{T<:Real,D<:Distribution} <: AbstractHV{T}
@@ -72,7 +79,7 @@ end
 
 RealHV(distr::Distribution, n::Integer=10_000) = RealHV(rand(distr,n), distr)
 RealHV(n::Integer=10_000) = RealHV(Normal(0,1), n)
-RealHV(v::AbstractVector) = RealHV(v,Normal(0,1))
+RealHV(v::AbstractVector, dist=Normal(mean(v),std(v))) = RealHV(v, distr)
 
 Base.similar(hv::RealHV) = RealHV(Normal(0,1), length(hv)) 
 
@@ -89,20 +96,17 @@ graded_distr = Beta(1,1)
 
 struct GradedHV{T<:Real,D<:Distribution} <: AbstractHV{T}
     v::Vector{T}
-    distr::D
-    GradedHV(v::AbstractVector{T}, distr::D=graded_distr) where {D<:Distribution,T<:AbstractFloat}= new{T,D}(v,distr)
 end
 
 function GradedHV(distr::Distribution=graded_distr, n::Int=10_000)
     @assert 0 ≤ minimum(distr) < maximum(distr) ≤ 1 "Provide `distr` with support in [0,1]"
-    GradedHV(rand(distr, n), distr)
+    GradedHV(rand(distr, n))
 end
 
 GradedHV(n::Int=10_000) = GradedHV(graded_distr, n)
-GradedHV(v::AbstractVector) = GradedHV(v, graded_distr)
+GradedHV(v::AbstractVector) = GradedHV(v)
 
-
-Base.similar(hv::GradedHV) = GradedHV(hv.distr, length(hv))
+Base.similar(hv::GradedHV) = GradedHV(graded_distr, length(hv))
 LinearAlgebra.normalize!(hv::GradedHV) = clamp!(hv.v, 0, 1)
 
 
@@ -113,16 +117,15 @@ graded_bipol_distr = 2graded_distr - 1
 
 struct GradedBipolarHV{T<:Real,D<:Distribution} <: AbstractHV{T}
     v::Vector{T}
-    distr::D
 end
 
 function GradedBipolarHV(distr::Distribution=graded_bipol_distr, n::Int=10_000)
     @assert -1 ≤ minimum(distr) < maximum(distr) ≤ 1 "Provide `distr` with support in [-1,1]"
-    GradedBipolarHV(rand(distr, n), distr)
+    GradedBipolarHV(rand(distr, n))
 end
 
 GradedBipolarHV(n::Int=10_000) = GradedBipolarHV(graded_bipol_distr, n)
-GradedBipolarHV(v::AbstractVector) = GradedBipolarHV(v, graded_distr)
+GradedBipolarHV(v::AbstractVector) = GradedBipolarHV(v)
 
 
 Base.similar(hv::GradedBipolarHV) = GradedBipolarHV(hv.distr, length(hv))
