@@ -19,7 +19,7 @@ operations.jl; This file implements operations that can be done on hypervectors 
 
 Maps a graded number in [0, 1] to the [-1, 1] interval.
 """
-grad2bipol(x::Number) = 2x - one(x)
+grad2bipol(x::Real) = 2x - one(x)
 
 
 """
@@ -27,7 +27,7 @@ bipol2grad(x::Number)
 
 Maps a bipolar number in [-1, 1] to the [0, 1] interval.
 """
-bipol2grad(x::Number) = (x + one(x)) / 2
+bipol2grad(x::Real) = (x + one(x)) / 2
 
 three_pi(x, y) = abs(x-y)==1 ? zero(x) : x * y / (x * y + (one(x) - x) * (one(y) - y))
 fuzzy_xor(x, y) = (one(x)-x) * y + x * (one(y)-y)
@@ -35,19 +35,21 @@ fuzzy_xor(x, y) = (one(x)-x) * y + x * (one(y)-y)
 three_pi_bipol(x, y) = grad2bipol(three_pi(bipol2grad(x), bipol2grad(y)))
 fuzzy_xor_bipol(x, y) = grad2bipol(fuzzy_xor(bipol2grad(x), bipol2grad(y)))  # currently just *
 
-aggfun(::AbstractHDV) = +
-aggfun(::GradedHDV) = three_pi
-aggfun(::GradedBipolarHDV) = three_pi_bipol
+aggfun(::Type{<:AbstractHV}) = +
+aggfun(::GradedHV) = three_pi
+aggfun(::GradedBipolarHV) = three_pi_bipol
 
-bindfun(::AbstractHDV) = *
-bindfun(::BinaryHDV) = ⊻
-bindfun(::GradedHDV) = fuzzy_xor
-bindfun(::GradedBipolarHDV) = fuzzy_xor_bipol
+bindfun(::AbstractHV) = *
+bindfun(::BinaryHV) = ⊻
+bindfun(::GradedHV) = fuzzy_xor
+bindfun(::GradedBipolarHV) = fuzzy_xor_bipol
 
-neutralbind(hdv::AbstractHDV) = one(eltype(hdv))
-neutralbind(hdv::BinaryHDV) = false
-neutralbind(hdv::GradedHDV) = zero(eltype(hdv))
-neutralbind(hdv::GradedBipolarHDV) = -one(eltype(hdv))
+neutralbind(hdv::AbstractHV) = one(eltype(hdv))
+neutralbind(hdv::BinaryHV) = false
+neutralbind(hdv::GradedHV) = zero(eltype(hdv))
+neutralbind(hdv::GradedBipolarHV) = -one(eltype(hdv))
+
+noisy_and(a,b) = a==b ? a : rand(Bool)
 
 function elementreduce!(f, itr, init)
     return foldl(itr; init) do acc, value
@@ -91,6 +93,53 @@ end
 # AGGREGATION
 # -----------
 
+# binary and bipolar: use majority
+function aggregate(T::Type{<:Union{BinaryHV,BipolarHV}}, hdvs, r)
+    m = 0
+    for hv in hdvs
+        r .+= hv.v
+        m += 1
+    end
+    if iseven(m)
+        r .+= bitrand(length(r))
+    end
+    return T(r.>m/2)
+end
+   
+# ternary: just add
+function aggregate(::Type{TernaryHV}, hdvs, r)
+    for hv in hdvs
+        r .+= hv.v
+    end
+    return TernaryHV(r)
+end
+
+# realhv: just add + rescale with sqrt m
+function aggregate(::Type{RealHV}, hdvs, r)
+    m = 0
+    for hv in hdvs
+        r .+= hv.v
+        m += 1
+    end
+    r ./= sqrt(m)
+    return RealHV(r)
+end
+
+function aggregate(::GradedHV, hdvs, r)
+    for hv in hdvs
+        r .= three_pi.(r, hv.v)
+    end
+    return GradedHV(r)
+end
+
+function aggregate(::GradedBipolarHV, hdvs, r)
+    for hv in hdvs
+        r .= three_pi_bipol.(r, hv.v)
+    end
+    return GradedBipolarHV(r)
+end
+
+#=
 aggregate(hdvs::AbstractVector{<:AbstractHDV}, args...; kwargs...) = aggregate!(similar(first(hdvs)), hdvs, args...; kwargs...)
 aggregate(hdvs::NTuple{N,T}, args...; kwargs...) where {N,T<:AbstractHDV} = aggregate!(similar(first(hdvs)), hdvs, args...; kwargs...)
 
@@ -104,9 +153,6 @@ function aggregate!(r::AbstractHDV, hdvs; clear=true, norm=false)
     aggr = aggfun(r)
     foldl(hdvs, init=r.v) do acc, value
         offsetcombine!(acc, aggr, acc, value.v, value.offset)
-    end
-    for hdv in hdvs
-        r.m += hdv.m
     end
     norm && normalize!(r)
     return r
@@ -127,6 +173,7 @@ function aggregate!(r::AbstractHDV, hdvs, weights; clear=true, norm=false)
 end
 
 aggregatewith!(r::AbstractHDV, hdvs; kwargs...) = aggregate!(r, hdvs; clear=false, kwargs...)
+=#
 
 # BINDING
 # -------
