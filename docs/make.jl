@@ -5,7 +5,7 @@ using Pkg, Literate, Glob
 ENV["DATADEPS_ALWAYS_ACCEPT"] = true
 
 # Compile Literate.jl examples to markdown
-TUTORIALS = joinpath(@__DIR__, "src", "tutorial")
+TUTORIALS = joinpath(@__DIR__, "src", "examples")
 SOURCE_FILES = Glob.glob("*.jl", TUTORIALS)
 foreach(fn -> Literate.markdown(fn, TUTORIALS), SOURCE_FILES)
 
@@ -36,8 +36,8 @@ makedocs(;
         "HyperdimensionalComputing.jl" => "index.md",
         "Examples" => [
 			"Introduction to HDC" => "examples/introduction-to-hdc.md",
-			"What's the Dollar of Mexico?" => "examples/whats-the-dollar-of-mexico.jl"
-		]
+			"What's the Dollar of Mexico?" => "examples/whats-the-dollar-of-mexico.md"
+		],
         "API" => "api.md",
     ],
     checkdocs=:exports,
