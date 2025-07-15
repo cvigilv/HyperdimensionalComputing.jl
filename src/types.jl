@@ -102,12 +102,10 @@ struct GradedHV{T<:Real} <: AbstractHV{T}
     GradedHV(v::AbstractVector{T}) where {T<:Real} = new{T}(clamp!(v,0,1))
 end
 
-function GradedHV(distr::Distribution=graded_distr, n::Int=10_000)
+function GradedHV(n::Int=10_000, distr=Normal(0, 1))
     @assert 0 ≤ minimum(distr) < maximum(distr) ≤ 1 "Provide `distr` with support in [0,1]"
     GradedHV(rand(distr, n))
 end
-
-GradedHV(n::Int=10_000) = GradedHV(graded_distr, n)
 
 Base.similar(hv::GradedHV) = GradedHV(graded_distr, length(hv))
 LinearAlgebra.normalize!(hv::GradedHV) = clamp!(hv.v, 0, 1)
