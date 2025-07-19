@@ -94,20 +94,21 @@ end
 # -----------
 
 # binary and bipolar: use majority
-function aggregate(T::Type{<:Union{BinaryHV,BipolarHV}}, hdvs, r)
-    m = 0
+function aggregate(hvr::Union{BinaryHV,BipolarHV}, hdvs, r)
+    m = length(hvr)
     for hv in hdvs
         r .+= hv.v
-        m += 1
     end
     if iseven(m)
         r .+= bitrand(length(r))
     end
-    return T(r.>m/2)
+    hvr = similar(hvr)
+    hvr.v .= r.>m/2
+    return hvr
 end
    
 # ternary: just add them, no normalization by default
-function aggregate(::Type{TernaryHV}, hdvs, r;
+function aggregate(::TernaryHV, hdvs, r;
             normalize=false)
     for hv in hdvs
         r .+= hv.v
@@ -117,7 +118,7 @@ function aggregate(::Type{TernaryHV}, hdvs, r;
 end
 
 # realhv: just add + rescale with sqrt m
-function aggregate(::Type{RealHV}, hdvs, r)
+function aggregate(::RealHV, hdvs, r)
     m = 0
     for hv in hdvs
         r .+= hv.v
@@ -127,14 +128,14 @@ function aggregate(::Type{RealHV}, hdvs, r)
     return RealHV(r)
 end
 
-function aggregate(::Type{GradedHV}, hdvs, r)
+function aggregate(::GradedHV, hdvs, r)
     for hv in hdvs
         r .= three_pi.(r, hv.v)
     end
     return GradedHV(r)
 end
 
-function aggregate(::Type{GradedBipolarHV}, hdvs, r)
+function aggregate(::GradedBipolarHV, hdvs, r)
     for hv in hdvs
         r .= three_pi_bipol.(r, hv.v)
     end
@@ -144,7 +145,7 @@ end
 function aggregate(hdvs; kwargs...)
     hv = first(hdvs)
     r = empty_vector(hv)
-    return aggregate(typeof(hv), hdvs, r, kwargs...)
+    return aggregate(hv, hdvs, r, kwargs...)
 end
 
 Base.:+(hv1::HV, hv2::HV) where {HV<:AbstractHV} = aggregate((hv1, hv2))
@@ -188,14 +189,14 @@ aggregatewith!(r::AbstractHDV, hdvs; kwargs...) = aggregate!(r, hdvs; clear=fals
 # BINDING
 # -------
 
-bind(hv1::BinaryHV, hv2::BinaryHV) = BinaryHV(hv1.v .⊻ hv2.v)
-bind(hv1::BipolarHV, hv2::BipolarHV) = BipolarHV(hv1.v .⊻ hv2.v)
-bind(hv1::TernaryHV, hv2::TernaryHV) = TernaryHV(hv1.v .* hv2.v)
-bind(hv1::RealHV, hv2::RealHV) = RealHV(hv1.v .* hv2.v)
-bind(hv1::GradedHV, hv2::GradedHV) = GradedHV(fuzzy_xor.(hv1.v, hv2.v))
-bind(hv1::GradedBipolarHV, hv2::GradedBipolarHV) = GradedBipolarHV(fuzzy_xor_bipol.(hv1.v, hv2.v))
+Base.bind(hv1::BinaryHV, hv2::BinaryHV) = BinaryHV(hv1.v .⊻ hv2.v)
+Base.bind(hv1::BipolarHV, hv2::BipolarHV) = BipolarHV(hv1.v .⊻ hv2.v)
+Base.bind(hv1::TernaryHV, hv2::TernaryHV) = TernaryHV(hv1.v .* hv2.v)
+Base.bind(hv1::RealHV, hv2::RealHV) = RealHV(hv1.v .* hv2.v)
+Base.bind(hv1::GradedHV, hv2::GradedHV) = GradedHV(fuzzy_xor.(hv1.v, hv2.v))
+Base.bind(hv1::GradedBipolarHV, hv2::GradedBipolarHV) = GradedBipolarHV(fuzzy_xor_bipol.(hv1.v, hv2.v))
 
-Base.:*(hv1::HV, hv1::HV) where {HV<:AbstractHV} = bind(hv1, hv2)
+Base.:*(hv1::HV, hv2::HV) where {HV<:AbstractHV} = bind(hv1, hv2)
 
 #=
 Base.bind(hdvs::AbstractVector{<:AbstractHDV}) = bind!(similar(first(hdvs)), hdvs)
@@ -220,17 +221,22 @@ end
 # --------
 
 shift!(hv::AbstractHV, k=1) = circshift!(hv.v, k)
-shift(hv::V, k=1) where {V<:AbstractHV} = V(circshift(hv.v, k))
+
+function shift(hv::AbstractHV, k=1)
+    r = similar(hv)
+    r.v .=  circshift(hv.v, k)
+    return r
+end
 
 function shift!(hv::V, k=1) where {V<:Union{BinaryHV,BipolarHV}}
     v = similar(hv.v)  # empty bitvector
-    hv.v = circshift!(v, hv.v, k)
+    hv.v .= circshift!(v, hv.v, k)
     return hv
 end
 
 function shift(hv::V, k=1) where {V<:Union{BinaryHV,BipolarHV}}
     v = similar(hv.v)  # empty bitvector
-    return T(circshift!(v, hv.v, k))
+    return V(circshift!(v, hv.v, k))
 end
 
 ρ(hv::AbstractHV, k=1) = shift(hv, k)

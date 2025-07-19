@@ -53,7 +53,7 @@ using Distributions, LinearAlgebra
         @test sum(hdv) ≈ sum(hdv.v)
         #@test eltype(GradedBipolarHV(Float32, n)) <: Float32
 
-        @test GradedBipolarHV(2Beta(10,2)-1, n) isa GradedBipolarHV
+        @test GradedBipolarHV(n, 2Beta(10,2)-1) isa GradedBipolarHV
 
         hv2 = GradedBipolarHV([0.1, 1.12, -0.2, -3.0])
         normalize!(hv2)
@@ -74,7 +74,7 @@ using Distributions, LinearAlgebra
         @test sum(hdv) ≈ sum(hdv.v)
         #@test eltype(GradedHV(Float32, n)) <: Float32
 
-        @test GradedHV(Beta(10,2), n) isa GradedHV
+        @test GradedHV(n, Beta(10,2)) isa GradedHV
 
         hv2 = GradedHV([0.1, 1.12, -0.2, -3.0])
         normalize!(hv2)
