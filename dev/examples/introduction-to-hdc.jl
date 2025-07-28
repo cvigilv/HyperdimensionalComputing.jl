@@ -1,255 +1,349 @@
-# # HyperdimensionalComputing.jl Tutorial
+# # Introduction to Hyperdimensional Computing with HyperdimensionalComputing.jl
 #
-# This tutorial introduces the core concepts of hyperdimensional computing using the HyperdimensionalComputing.jl package.
-# We'll cover creating hypervectors, performing operations on them, and encoding various data structures.
+# ## Introduction
+#
+# Hyperdimensional Computing (HDC) is a brain-inspired computational paradigm that represents
+# and manipulates information using high-dimensional vectors called **hypervectors**. These
+# vectors typically have thousands of dimensions (often 1,000-10,000), making them
+# "hyperdimensional."
+#
+# The key insight is that high-dimensional spaces have unique mathematical properties that allow
+# for robust, fault-tolerant computation. Think of it like having a vast library where each book
+# (hypervector) has so many pages that even if you change a few pages, you can still identify
+# which book it is.
+#
+# Rather than the specific choice of the values in the hyperdimensional representations, we
+# identify 4 hallmarks that distinguish hyperdimensional computing from other approaches:
+#
+# 1. **Hyperdimensional**: The HVs live in a very high-dimensional space, large enough such that
+# random components can be seen as distinct and dissimilar from one another;
+# 2. **Homogeneous**: The vast majority of HVs all have highly similar properties: they have
+# (approximately) the same norm, are all equally (dis)similar to one another, and have the same
+# dimensionality, even if they embed more complex information;
+# 3. **Holographic**: The information encoded in an HV is distributed over its many dimensions;
+# no specific region is more informative than another for a specific piece of information;
+# 4. **Robust**: Randomly changing a modest number of the components does not substantially change
+# an HV's meaning.
+#
+# The basic operations needed for HDC are remarkably simple. They hinge on 4 operations to
+# manipulate and extract the information in the HVs:
+#
+# - Generating new HVs from scratch;
+# - Combining a set of HVs into a new HV that is similar to all;
+# - Using one or more HVs to generate a new one that is dissimilar to its parent(s);
+# - Comparing 2 HVs to detect whether they are more (dis)similar than expected by chance.
+#
+# ## 1. Hypervector Creation
+#
+# ### Bipolar Hypervectors
+#
+# In this tutorial, we'll focus on **bipolar hypervectors** - vectors containing only -1s and
+# +1s. A typical bipolar hypervector has dimension $D$ (e.g., $D = 10,000$) where each element
+# is randomly assigned:
+#
+# $$\mathbf{h} \in \{-1,+1\}^D$$
+#
+# For example, a 8-dimensional bipolar hypervector might look like:
+# $$\mathbf{h} = [+1, -1, +1, +1, -1, -1, +1, -1]$$
+#
+# To generate a bipolar hypervector with HyperdimensionalComputing.jl package, you can do the
+# following:
 
 using HyperdimensionalComputing
 
-# ## 1. Creating Hypervectors
+h = BipolarHDV()
+
+# This will create a random vector of -1s and +1s of 10.000 dimensions.
 #
-# Hyperdimensional vectors (HDVs) are high-dimensional vectors that form the foundation of hyperdimensional computing.
-# The package provides several types of hypervectors, each with different characteristics.
-
-# ### 1.1 Bipolar Hypervectors
-# 
-# BipolarHDV contains values of -1 and 1, making them suitable for many HD computing applications.
-
-# Create a bipolar hypervector with default dimension (10,000)
-bipolar_hdv = BipolarHDV()
-println("Bipolar HDV size: ", size(bipolar_hdv))
-println("First 10 elements: ", bipolar_hdv.v[1:10])
-
-# Create a bipolar hypervector with custom dimension
-small_bipolar = BipolarHDV(100)
-println("Small bipolar HDV size: ", size(small_bipolar))
-
-# ### 1.2 Binary Hypervectors
+# ### Key Properties
 #
-# BinaryHDV contains values of 0 and 1, useful for binary operations.
-
-binary_hdv = BinaryHDV(1000)
-println("Binary HDV first 10 elements: ", binary_hdv.v[1:10])
-
-# ### 1.3 Real-valued Hypervectors
+# **Quasi-orthogonality**: Randomly generated bipolar hypervectors are approximately orthogonal
+# to each other. In high dimensions, the probability that two random bipolar vectors are similar
+# becomes vanishingly small - like finding two identical snowflakes.
 #
-# RealHDV contains real values drawn from a normal distribution.
-
-real_hdv = RealHDV(1000)
-println("Real HDV first 10 elements: ", real_hdv.v[1:10])
-
-# ### 1.4 Graded Hypervectors
+# **Distance Preservation**: The cosine similarity between random bipolar hypervectors follows
+# a normal distribution centered around 0.
 #
-# GradedBipolarHDV and GradedHDV allow for graded relationships with values in continuous ranges.
-
-graded_bipolar = GradedBipolarHDV(Float32, 1000)
-println("Graded bipolar HDV first 10 elements: ", graded_bipolar.v[1:10])
-
-graded_hdv = GradedHDV(Float32, 1000)
-println("Graded HDV first 10 elements: ", graded_hdv.v[1:10])
-
-# ## 2. Operations over Hypervectors
+# ## 2. Fundamental Operations
 #
-# Hyperdimensional computing relies on three fundamental operations: bundling (aggregation), 
-# binding, and shifting (permutation).
-
-# ### 2.1 Bundling/Aggregation
+# HDC uses three primary operations that preserve the hyperdimensional properties:
 #
-# Bundling combines multiple vectors into a single vector that is similar to all input vectors.
-# This is useful for creating superposition representations.
+# ### 2.1 Bundling (Superposition)
+#
+# **Bundling** combines multiple hypervectors to create a summary vector that contains information from all inputs. Think of it as creating a "blend" that retains traces of all ingredients.
+#
+# For bipolar vectors, bundling uses **majority voting**:
+#
+# $$\text{Bundle}(\mathbf{h_1}, \mathbf{h_2}, ..., \mathbf{h_n})_i = \begin{cases}
+# +1 & \text{if } \sum_{j=1}^{n} h_{j,i} > 0 \\
+# -1 & \text{otherwise}
+# \end{cases}$$
+#
+# **Example**: Bundling three 8-dimensional vectors:
+# - $\mathbf{a} = [+1, -1, +1, +1, -1, -1, +1, -1]$
+# - $\mathbf{b} = [-1, +1, +1, -1, +1, -1, +1, +1]$
+# - $\mathbf{c} = [+1, +1, -1, +1, -1, +1, +1, -1]$
+#
+# Result: $\text{Bundle}(\mathbf{a}, \mathbf{b}, \mathbf{c}) = [+1, +1, +1, +1, -1, -1, +1, -1]$
+#
+# In HyperdimensionalComputing.jl, this is done as follows:
 
-# Create some sample vectors
-hdv1 = BipolarHDV(100)
-hdv2 = BipolarHDV(100) 
-hdv3 = BipolarHDV(100)
+h₁ = BipolarHDV([ 1, -1,  1,  1, -1, -1,  1, -1])
+h₂ = BipolarHDV([-1,  1,  1, -1,  1, -1,  1,  1])
+h₃ = BipolarHDV([ 1,  1, -1,  1, -1,  1,  1, -1])
+aggregate([h₁, h₂, h₃])
 
-# Bundle vectors using the + operator
-bundled = hdv1 + hdv2
-println("Bundled vector size: ", size(bundled))
+# You can also do the same using the `+` operator:
 
-# Bundle multiple vectors using aggregate
-multi_bundled = aggregate([hdv1, hdv2, hdv3])
-println("Multi-bundled vector size: ", size(multi_bundled))
+h₁ + h₂ + h₃
 
 # ### 2.2 Binding
 #
-# Binding combines vectors to create a new vector that is dissimilar to both inputs.
-# This operation is used to associate different pieces of information.
-
-# Bind two vectors using the * operator
-bound = hdv1 * hdv2
-println("Bound vector size: ", size(bound))
-
-# Bind multiple vectors
-multi_bound = bind([hdv1, hdv2, hdv3])
-println("Multi-bound vector size: ", size(multi_bound))
-
-# ### 2.3 Shifting (Permutation)
+# **Binding** creates associations between hypervectors, similar to forming key-value pairs. The
+# bound result is dissimilar to both inputs, but can be "unbound" using one input to retrieve the
+# other.
 #
-# Shifting performs cyclic permutation of vector elements, which is useful for encoding sequences.
+# For bipolar vectors, binding uses **element-wise multiplication**:
+#
+# $$\text{Bind}(\mathbf{a}, \mathbf{b}) = \mathbf{a} \odot \mathbf{b}$$
+#
+# **Example**:
+# - $\mathbf{a} = [+1, -1, +1, +1, -1, -1, +1, -1]$
+# - $\mathbf{b} = [-1, +1, +1, -1, +1, -1, +1, +1]$
+# - $\mathbf{a} \odot \mathbf{b} = [-1, -1, +1, -1, -1, +1, +1, -1]$
+#
+# In HyperdimensionalComputing.jl, binding can be done using the `bind` function: `*` operators:
 
-# Shift vector by 5 positions
-shifted = Π(hdv1, 5)
-println("Shifted vector has same size: ", size(shifted) == size(hdv1))
+bound = bind([h₁, h₂])
 
-# In-place shifting
-Π!(hdv1, 3)
-println("In-place shifted vector offset: ", hdv1.offset)
+# or the `*` operator:
+
+h₁ * h₂
+
+# **Unbinding**: Since element-wise multiplication is its own inverse for bipolar vectors,
+# $(\mathbf{a} \odot \mathbf{b}) \odot \mathbf{a} = \mathbf{b}$, we can unbind information from
+# a hypervector as follows:
+
+retrieved = bound * h₁
+
+#
+
+h₂ == retrieved
+
+# ### 2.3 Shifting/Permutation
+#
+# **Shifting** (or permutation) creates new hypervectors that are orthogonal to the original
+# while preserving structure. It's like rearranging the elements according to a fixed pattern.
+#
+# For bipolar vectors, a common approach is **circular shifting**:
+#
+# $$\text{Shift}(\mathbf{h}, k)_i = h_{(i-k) \bmod D}$$
+#
+# **Example** with right shift by 2:
+# - Original: $[+1, -1, +1, +1, -1, -1, +1, -1]$
+# - Shifted: $[+1, -1, +1, -1, +1, +1, -1, -1]$
+# 
+# In HyperdimensionalComputing.jl, this is done with the `Π` (`\Pi`) operator:
+#
+
+Π(h₁, 2)
 
 # ### 2.4 Similarity Measurement
 #
-# We can measure similarity between vectors to determine how related they are.
-
-# Create two similar vectors (one is a shifted version of the other)
-base_vector = BipolarHDV(1000)
-shifted_vector = Π(base_vector, 1)
-random_vector = BipolarHDV(1000)
-
-# Calculate similarities
-sim_shifted = similarity(base_vector, shifted_vector)
-sim_random = similarity(base_vector, random_vector)
-
-println("Similarity with shifted version: ", sim_shifted)
-println("Similarity with random vector: ", sim_random)
-
-# ## 3. Encoding Structures
+# For classification and retrieval, we measure similarity using **cosine similarity** for bipolar
+# vectors:
 #
-# Now we'll explore how to encode different data structures using hypervectors.
-
-# ### 3.1 Encoding Sets
+# $$\text{Similarity}(\mathbf{a}, \mathbf{b}) = \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}||\mathbf{b}|} = \frac{\mathbf{a} \cdot \mathbf{b}}{D}$$
 #
-# Sets can be encoded by bundling the hypervectors representing each element.
-
-# Create a vocabulary of elements
-vocabulary = ['a', 'b', 'c', 'd', 'e']
-element_hdvs = Dict(char => BipolarHDV(1000) for char in vocabulary)
-
-# Encode a set {a, c, e}
-set1 = ['a', 'c', 'e']
-set1_encoding = aggregate([element_hdvs[char] for char in set1])
-
-# Encode another set {b, c, d}
-set2 = ['b', 'c', 'd']
-set2_encoding = aggregate([element_hdvs[char] for char in set2])
-
-# Check similarity (should be low since sets have little overlap)
-set_similarity = similarity(set1_encoding, set2_encoding)
-println("Similarity between sets {a,c,e} and {b,c,d}: ", set_similarity)
-
-# Encode a more similar set {a, c, d}
-set3 = ['a', 'c', 'd']
-set3_encoding = aggregate([element_hdvs[char] for char in set3])
-set3_similarity = similarity(set1_encoding, set3_encoding)
-println("Similarity between sets {a,c,e} and {a,c,d}: ", set3_similarity)
-
-# ### 3.2 Encoding Key-Value Pairs
+# Since bipolar vectors have unit magnitude ($|\mathbf{h}| = \sqrt{D}$), the cosine similarity
+# simplifies to the normalized dot product:
 #
-# Key-value pairs can be encoded by binding the key and value vectors, then bundling multiple pairs.
+# $\text{Similarity}(\mathbf{a}, \mathbf{b}) = \frac{\mathbf{a} \cdot \mathbf{b}}{D}$
 
-# Create vocabulary for keys and values
-keys = ["name", "age", "city"]
-values = ["Alice", "25", "Boston", "Bob", "30", "Chicago"]
+sim = similarity(h₁, h₂)
 
-# Create hypervectors for keys and values
-key_hdvs = Dict(k => BipolarHDV(1000) for k in keys)
-value_hdvs = Dict(v => BipolarHDV(1000) for v in values)
-
-# Encode a record: {name: Alice, age: 25, city: Boston}
-record1_pairs = [
-    key_hdvs["name"] * value_hdvs["Alice"],
-    key_hdvs["age"] * value_hdvs["25"],
-    key_hdvs["city"] * value_hdvs["Boston"]
-]
-record1_encoding = aggregate(record1_pairs)
-
-# Encode another record: {name: Bob, age: 30, city: Chicago}
-record2_pairs = [
-    key_hdvs["name"] * value_hdvs["Bob"],
-    key_hdvs["age"] * value_hdvs["30"],
-    key_hdvs["city"] * value_hdvs["Chicago"]
-]
-record2_encoding = aggregate(record2_pairs)
-
-# Check similarity between records
-record_similarity = similarity(record1_encoding, record2_encoding)
-println("Similarity between records: ", record_similarity)
-
-# Query a record: What's the name in record1?
-# We bind the record with the key to retrieve the value
-name_query = record1_encoding * key_hdvs["name"]
-name_similarity_alice = similarity(name_query, value_hdvs["Alice"])
-name_similarity_bob = similarity(name_query, value_hdvs["Bob"])
-
-println("Name query similarity with Alice: ", name_similarity_alice)
-println("Name query similarity with Bob: ", name_similarity_bob)
-
-# ### 3.3 Encoding Strings
+# ## 3. Encoding Data as Hypervectors
 #
-# Strings can be encoded using n-grams, which capture local sequential patterns.
-
-# Create character vocabulary
-chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
-         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' ']
-char_hdvs = Dict(c => BipolarHDV(1000) for c in chars)
-
-# Compute 3-grams for encoding strings
-trigrams = compute_3_grams(char_hdvs)
-println("Trigram embedding order: ", order(trigrams))
-
-# Encode some strings
-string1 = "hello world"
-string2 = "hello there"
-string3 = "goodbye world"
-
-# Convert strings to character arrays
-seq1 = collect(string1)
-seq2 = collect(string2)
-seq3 = collect(string3)
-
-# Encode strings using trigrams
-encoding1 = sequence_embedding(seq1, trigrams)
-encoding2 = sequence_embedding(seq2, trigrams)
-encoding3 = sequence_embedding(seq3, trigrams)
-
-# Check similarities
-sim_hello = similarity(encoding1, encoding2)  # Both start with "hello"
-sim_world = similarity(encoding1, encoding3)  # Both end with "world"
-sim_different = similarity(encoding2, encoding3)  # Quite different
-
-println("Similarity 'hello world' vs 'hello there': ", sim_hello)
-println("Similarity 'hello world' vs 'goodbye world': ", sim_world)
-println("Similarity 'hello there' vs 'goodbye world': ", sim_different)
-
-# ### 3.4 Basic Learning Example
+# The true power of HDC emerges when we combine the fundamental operations to encode complex data
+# structures as hypervectors. By creatively applying bundling, binding, and shifting, we can
+# represent virtually any type of information - from sequences and hierarchies to graphs and
+# associative memories. The operations act as building blocks that can be composed in countless
+# ways, limited only by our imagination and the specific requirements of our application. Let's
+# explore two fundamental encoding strategies that demonstrate this flexibility.
 #
-# We can use the encoded vectors for simple classification tasks.
-
-# Create training data
-training_strings = ["apple banana", "banana cherry", "cherry date", "date elderberry"]
-training_labels = ["fruit_pair_1", "fruit_pair_2", "fruit_pair_3", "fruit_pair_4"]
-
-# Encode training strings
-training_encodings = [sequence_embedding(collect(s), trigrams) for s in training_strings]
-
-# Train a simple classifier
-centers = train(training_labels, training_encodings)
-println("Trained centers for classes: ", keys(centers))
-
-# Test on new data
-test_string = "apple cherry"  # Similar to training examples
-test_encoding = sequence_embedding(collect(test_string), trigrams)
-
-# Make prediction
-prediction = predict(test_encoding, centers)
-println("Prediction for 'apple cherry': ", prediction)
-
-# ## Conclusion
+# ### 3.1 N-gram Encoding
 #
-# This tutorial covered the basics of hyperdimensional computing with HyperdimensionalComputing.jl:
-# 
-# 1. **Creating hypervectors**: Different types (Bipolar, Binary, Real, Graded) for different applications
-# 2. **Operations**: Bundling for superposition, binding for association, shifting for sequences
-# 3. **Encoding structures**: Sets through bundling, key-value pairs through binding+bundling, strings through n-grams
+# **N-grams** represent sequences by encoding the order of elements. This is particularly useful for text processing where word order matters.
 #
-# Hyperdimensional computing provides a powerful framework for representing and manipulating 
-# high-dimensional symbolic data, with applications in machine learning, cognitive architectures, 
-# and neuromorphic computing.
+# **Approach**:
+# 1. Assign a unique hypervector to each symbol
+# 2. Use shifting to represent position
+# 3. Bundle all positions to create the n-gram
+#
+# **Mathematical formulation** for trigram "ABC":
+#
+# $$\mathbf{trigram} = \mathbf{A} \odot \text{Shift}(\mathbf{B}, 1) \odot \text{Shift}(\mathbf{C}, 2)$$
+#
+# **Example**: For the word "CAT":
+# - Bigrams: "CA", "AT"
+# - $\mathbf{CA} = \mathbf{C} \odot \text{Shift}(\mathbf{A}, 1)$
+# - $\mathbf{AT} = \mathbf{A} \odot \text{Shift}(\mathbf{T}, 1)$
+# - Word representation: $\text{Bundle}(\mathbf{CA}, \mathbf{AT})$
+
+# function encode_ngrams(text::String, n::Int, dimension::Int=1000)
+#     # Create symbol dictionary
+#     symbols = Dict{Char, Vector{Int}}()
+#     for char in unique(text)
+#         symbols[char] = random_bipolar_vector(dimension)
+#     end
+#
+#     # Generate n-grams
+#     ngram_vectors = Vector{Vector{Int}}()
+#
+#     for i in 1:(length(text) - n + 1)
+#         ngram = text[i:i+n-1]
+#         ngram_vector = symbols[ngram[1]]
+#
+#         for j in 2:length(ngram)
+#             shifted = ∏(symbols[ngram[j]], j-1)
+#             ngram_vector = bind(ngram_vector, shifted)
+#         end
+#
+#         push!(ngram_vectors, ngram_vector)
+#     end
+#
+#     return bundle(ngram_vectors)
+# end
+#
+# # Create n-gram encoding for a sequence
+# word_vector = encode_ngrams("CAT", 2)
+# println("Encoded 'CAT' with bigrams, vector length: ", length(word_vector))
+
+# ### 3.2 Hash Table Encoding
+
+# **Hash tables** in HDC map keys to values using binding, creating associative memories that can handle noise and incomplete queries.
+
+# **Construction**:
+# 1. For each key-value pair $(k_i, v_i)$, create $\mathbf{k_i} \odot \mathbf{v_i}$
+# 2. Bundle all bound pairs: $\mathbf{M} = \text{Bundle}(\mathbf{k_1} \odot \mathbf{v_1}, \mathbf{k_2} \odot \mathbf{v_2}, ...)$
+
+# **Retrieval**: To query key $\mathbf{q}$, compute $\mathbf{M} \odot \mathbf{q}$ and find the closest stored value.
+
+# **Example**: Storing animal-sound associations:
+# - Store: ("dog", "bark"), ("cat", "meow"), ("cow", "moo")
+# - Memory: $\mathbf{M} = \text{Bundle}(\mathbf{dog} \odot \mathbf{bark}, \mathbf{cat} \odot \mathbf{meow}, \mathbf{cow} \odot \mathbf{moo})$
+# - Query "dog": $\mathbf{M} \odot \mathbf{dog} \approx \mathbf{bark}$
+
+# function create_hash_table(key_value_pairs::Vector{Tuple{String, String}}, dimension::Int=1000)
+#     # Create symbol dictionaries
+#     keys = Dict{String, Vector{Int}}()
+#     values = Dict{String, Vector{Int}}()
+#
+#     for (k, v) in key_value_pairs
+#         if !haskey(keys, k)
+#             keys[k] = random_bipolar_vector(dimension)
+#         end
+#         if !haskey(values, v)
+#             values[v] = random_bipolar_vector(dimension)
+#         end
+#     end
+#
+#     # Create bound pairs and bundle them
+#     bound_pairs = [bind(keys[k], values[v]) for (k, v) in key_value_pairs]
+#     memory = bundle(bound_pairs)
+#
+#     return (memory, keys, values)
+# end
+#
+# function query_hash_table(memory::Vector{Int}, query_key::Vector{Int}, values::Dict{String, Vector{Int}})
+#     # Unbind with query key
+#     result = bind(memory, query_key)
+#
+#     # Find most similar value
+#     best_match = ""
+#     best_similarity = -Inf
+#
+#     for (value_name, value_vector) in values
+#         sim = cosine_similarity(result, value_vector)
+#         if sim > best_similarity
+#             best_similarity = sim
+#             best_match = value_name
+#         end
+#     end
+#
+#     return best_match, best_similarity
+# end
+#
+# # Create and query HDC hash table
+# key_value_pairs = [("dog", "bark"), ("cat", "meow"), ("cow", "moo")]
+# memory, keys, values = create_hash_table(key_value_pairs)
+#
+# # Query the hash table
+# result, similarity = query_hash_table(memory, keys["dog"], values)
+# println("Query 'dog' result: ", result, " (similarity: ", similarity, ")")
+
+# ## 4. Basic Learning via Prototype Generation
+
+# ### 4.1 Sum-All-Hypervectors Approach
+
+# The simplest learning method creates **class prototypes** by bundling all training examples belonging to each class.
+
+# **Algorithm**:
+# 1. For each class $c$, bundle all training examples: $\mathbf{P_c} = \text{Bundle}(\mathbf{x_1}, \mathbf{x_2}, ..., \mathbf{x_n})$ where $\mathbf{x_i} \in c$
+# 2. For classification, compute similarity between test example and each prototype
+# 3. Assign to the most similar class
+
+# **Language Detection Example**:
+# - English prototype: Bundle all English text hypervectors
+# - Spanish prototype: Bundle all Spanish text hypervectors
+# - French prototype: Bundle all French text hypervectors
+
+# function train_prototypes(training_data::Dict{String, Vector{Vector{Int}}})
+#     prototypes = Dict{String, Vector{Int}}()
+#
+#     for (language, examples) in training_data
+#         prototypes[language] = bundle(examples)
+#     end
+#
+#     return prototypes
+# end
+#
+# function classify_text(test_vector::Vector{Int}, prototypes::Dict{String, Vector{Int}})
+#     best_language = ""
+#     best_similarity = -Inf
+#
+#     for (language, prototype) in prototypes
+#         sim = cosine_similarity(test_vector, prototype)
+#         if sim > best_similarity
+#             best_similarity = sim
+#             best_language = language
+#         end
+#     end
+#
+#     return best_language, best_similarity
+# end
+#
+# # Example with simulated language data
+# english_examples = [random_bipolar_vector(1000) for _ in 1:10]
+# spanish_examples = [random_bipolar_vector(1000) for _ in 1:10]
+# french_examples = [random_bipolar_vector(1000) for _ in 1:10]
+#
+# training_data = Dict(
+#     "English" => english_examples,
+#     "Spanish" => spanish_examples,
+#     "French" => french_examples
+# )
+#
+# # Train prototypes for each language
+# prototypes = train_prototypes(training_data)
+#
+# # Classify new text
+# test_text = random_bipolar_vector(1000)
+# predicted_language, similarity = classify_text(test_text, prototypes)
+# println("Predicted language: ", predicted_language, " (similarity: ", similarity, ")")
+
+# ## Summary
+
+# Hyperdimensional Computing provides a robust framework for representing and processing information using high-dimensional bipolar vectors. The three fundamental operations (bundling, binding, and shifting) enable complex computations while maintaining interpretability and fault tolerance. Through encodings like n-grams and hash tables, HDC can handle structured data, while learning algorithms enable adaptive classification systems that improve with experience.
+
+# The power of HDC lies in its simplicity: using only basic operations on bipolar vectors, it can solve complex problems in machine learning, natural language processing, and cognitive computing while remaining transparent and interpretable.

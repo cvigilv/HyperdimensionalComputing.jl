@@ -1,25 +1,14 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Introduction to HDC · HyperdimensionalComputing.jl</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://cvigilv.github.io/HyperdimensionalComputing.jl/examples/introduction-to-hdc/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">HyperdimensionalComputing.jl</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">HyperdimensionalComputing.jl</a></li><li><span class="tocitem">Examples</span><ul><li class="is-active"><a class="tocitem" href>Introduction to HDC</a><ul class="internal"><li><a class="tocitem" href="#.-Creating-Hypervectors"><span>1. Creating Hypervectors</span></a></li><li><a class="tocitem" href="#.-Operations-over-Hypervectors"><span>2. Operations over Hypervectors</span></a></li><li><a class="tocitem" href="#.-Encoding-Structures"><span>3. Encoding Structures</span></a></li><li><a class="tocitem" href="#Conclusion"><span>Conclusion</span></a></li></ul></li><li><a class="tocitem" href="../whats-the-dollar-of-mexico/">What&#39;s the Dollar of Mexico?</a></li></ul></li><li><a class="tocitem" href="../../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Introduction to HDC</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Introduction to HDC</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/cvigilv/HyperdimensionalComputing.jl/blob/main/docs/src/examples/introduction-to-hdc.jl#" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="HyperdimensionalComputing.jl-Tutorial"><a class="docs-heading-anchor" href="#HyperdimensionalComputing.jl-Tutorial">HyperdimensionalComputing.jl Tutorial</a><a id="HyperdimensionalComputing.jl-Tutorial-1"></a><a class="docs-heading-anchor-permalink" href="#HyperdimensionalComputing.jl-Tutorial" title="Permalink"></a></h1><p>This tutorial introduces the core concepts of hyperdimensional computing using the HyperdimensionalComputing.jl package. We&#39;ll cover creating hypervectors, performing operations on them, and encoding various data structures.</p><pre><code class="language-julia hljs">using HyperdimensionalComputing</code></pre><h2 id=".-Creating-Hypervectors"><a class="docs-heading-anchor" href="#.-Creating-Hypervectors">1. Creating Hypervectors</a><a id=".-Creating-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#.-Creating-Hypervectors" title="Permalink"></a></h2><p>Hyperdimensional vectors (HDVs) are high-dimensional vectors that form the foundation of hyperdimensional computing. The package provides several types of hypervectors, each with different characteristics.</p><h3 id=".1-Bipolar-Hypervectors"><a class="docs-heading-anchor" href="#.1-Bipolar-Hypervectors">1.1 Bipolar Hypervectors</a><a id=".1-Bipolar-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#.1-Bipolar-Hypervectors" title="Permalink"></a></h3><p>BipolarHDV contains values of -1 and 1, making them suitable for many HD computing applications.</p><p>Create a bipolar hypervector with default dimension (10,000)</p><pre><code class="language-julia hljs">bipolar_hdv = BipolarHDV()
-println(&quot;Bipolar HDV size: &quot;, size(bipolar_hdv))
-println(&quot;First 10 elements: &quot;, bipolar_hdv.v[1:10])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Bipolar HDV size: (10000,)
-First 10 elements: [1, 1, -1, 1, 1, -1, -1, 1, 1, 1]</code></pre><p>Create a bipolar hypervector with custom dimension</p><pre><code class="language-julia hljs">small_bipolar = BipolarHDV(100)
-println(&quot;Small bipolar HDV size: &quot;, size(small_bipolar))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Small bipolar HDV size: (100,)</code></pre><h3 id=".2-Binary-Hypervectors"><a class="docs-heading-anchor" href="#.2-Binary-Hypervectors">1.2 Binary Hypervectors</a><a id=".2-Binary-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#.2-Binary-Hypervectors" title="Permalink"></a></h3><p>BinaryHDV contains values of 0 and 1, useful for binary operations.</p><pre><code class="language-julia hljs">binary_hdv = BinaryHDV(1000)
-println(&quot;Binary HDV first 10 elements: &quot;, binary_hdv.v[1:10])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Binary HDV first 10 elements: [0, 0, 1, 0, 1, 0, 0, 1, 0, 0]</code></pre><h3 id=".3-Real-valued-Hypervectors"><a class="docs-heading-anchor" href="#.3-Real-valued-Hypervectors">1.3 Real-valued Hypervectors</a><a id=".3-Real-valued-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#.3-Real-valued-Hypervectors" title="Permalink"></a></h3><p>RealHDV contains real values drawn from a normal distribution.</p><pre><code class="language-julia hljs">real_hdv = RealHDV(1000)
-println(&quot;Real HDV first 10 elements: &quot;, real_hdv.v[1:10])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Real HDV first 10 elements: [-0.725540061529448, -1.2682466987831313, -0.23581945779781185, 1.445549925863458, -1.2615667745554613, -1.3583311886754799, 0.9989037922627766, 2.00231282343578, 0.30693579131108945, 0.1978863434448143]</code></pre><h3 id=".4-Graded-Hypervectors"><a class="docs-heading-anchor" href="#.4-Graded-Hypervectors">1.4 Graded Hypervectors</a><a id=".4-Graded-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#.4-Graded-Hypervectors" title="Permalink"></a></h3><p>GradedBipolarHDV and GradedHDV allow for graded relationships with values in continuous ranges.</p><pre><code class="language-julia hljs">graded_bipolar = GradedBipolarHDV(Float32, 1000)
-println(&quot;Graded bipolar HDV first 10 elements: &quot;, graded_bipolar.v[1:10])
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Introduction to HDC · HyperdimensionalComputing.jl</title><meta name="title" content="Introduction to HDC · HyperdimensionalComputing.jl"/><meta property="og:title" content="Introduction to HDC · HyperdimensionalComputing.jl"/><meta property="twitter:title" content="Introduction to HDC · HyperdimensionalComputing.jl"/><meta name="description" content="Documentation for HyperdimensionalComputing.jl."/><meta property="og:description" content="Documentation for HyperdimensionalComputing.jl."/><meta property="twitter:description" content="Documentation for HyperdimensionalComputing.jl."/><meta property="og:url" content="https://cvigilv.github.io/HyperdimensionalComputing.jl/examples/introduction-to-hdc/"/><meta property="twitter:url" content="https://cvigilv.github.io/HyperdimensionalComputing.jl/examples/introduction-to-hdc/"/><link rel="canonical" href="https://cvigilv.github.io/HyperdimensionalComputing.jl/examples/introduction-to-hdc/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">HyperdimensionalComputing.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">HyperdimensionalComputing.jl</a></li><li><span class="tocitem">Examples</span><ul><li class="is-active"><a class="tocitem" href>Introduction to HDC</a><ul class="internal"><li><a class="tocitem" href="#Introduction"><span>Introduction</span></a></li><li><a class="tocitem" href="#1.-Hypervector-Creation"><span>1. Hypervector Creation</span></a></li><li><a class="tocitem" href="#2.-Fundamental-Operations"><span>2. Fundamental Operations</span></a></li><li><a class="tocitem" href="#3.-Encoding-Data-as-Hypervectors"><span>3. Encoding Data as Hypervectors</span></a></li><li class="toplevel"><a class="tocitem" href="#Create-n-gram-encoding-for-a-sequence"><span>Create n-gram encoding for a sequence</span></a></li><li class="toplevel"><a class="tocitem" href="#Create-and-query-HDC-hash-table"><span>Create and query HDC hash table</span></a></li><li class="toplevel"><a class="tocitem" href="#Query-the-hash-table"><span>Query the hash table</span></a></li><li><a class="tocitem" href="#4.-Basic-Learning-via-Prototype-Generation"><span>4. Basic Learning via Prototype Generation</span></a></li><li class="toplevel"><a class="tocitem" href="#Example-with-simulated-language-data"><span>Example with simulated language data</span></a></li><li class="toplevel"><a class="tocitem" href="#Train-prototypes-for-each-language"><span>Train prototypes for each language</span></a></li><li class="toplevel"><a class="tocitem" href="#Classify-new-text"><span>Classify new text</span></a></li><li><a class="tocitem" href="#Summary"><span>Summary</span></a></li></ul></li></ul></li><li><a class="tocitem" href="../../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Introduction to HDC</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Introduction to HDC</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/cvigilv/HyperdimensionalComputing.jl/blob/main/docs/src/examples/introduction-to-hdc.jl#" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Introduction-to-Hyperdimensional-Computing-with-HyperdimensionalComputing.jl"><a class="docs-heading-anchor" href="#Introduction-to-Hyperdimensional-Computing-with-HyperdimensionalComputing.jl">Introduction to Hyperdimensional Computing with HyperdimensionalComputing.jl</a><a id="Introduction-to-Hyperdimensional-Computing-with-HyperdimensionalComputing.jl-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction-to-Hyperdimensional-Computing-with-HyperdimensionalComputing.jl" title="Permalink"></a></h1><h2 id="Introduction"><a class="docs-heading-anchor" href="#Introduction">Introduction</a><a id="Introduction-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction" title="Permalink"></a></h2><p>Hyperdimensional Computing (HDC) is a brain-inspired computational paradigm that represents and manipulates information using high-dimensional vectors called <strong>hypervectors</strong>. These vectors typically have thousands of dimensions (often 1,000-10,000), making them &quot;hyperdimensional.&quot;</p><p>The key insight is that high-dimensional spaces have unique mathematical properties that allow for robust, fault-tolerant computation. Think of it like having a vast library where each book (hypervector) has so many pages that even if you change a few pages, you can still identify which book it is.</p><p>Rather than the specific choice of the values in the hyperdimensional representations, we identify 4 hallmarks that distinguish hyperdimensional computing from other approaches:</p><ol><li><strong>Hyperdimensional</strong>: The HVs live in a very high-dimensional space, large enough such that</li></ol><p>random components can be seen as distinct and dissimilar from one another;</p><ol><li><strong>Homogeneous</strong>: The vast majority of HVs all have highly similar properties: they have</li></ol><p>(approximately) the same norm, are all equally (dis)similar to one another, and have the same dimensionality, even if they embed more complex information;</p><ol><li><strong>Holographic</strong>: The information encoded in an HV is distributed over its many dimensions;</li></ol><p>no specific region is more informative than another for a specific piece of information;</p><ol><li><strong>Robust</strong>: Randomly changing a modest number of the components does not substantially change</li></ol><p>an HV&#39;s meaning.</p><p>The basic operations needed for HDC are remarkably simple. They hinge on 4 operations to manipulate and extract the information in the HVs:</p><ul><li>Generating new HVs from scratch;</li><li>Combining a set of HVs into a new HV that is similar to all;</li><li>Using one or more HVs to generate a new one that is dissimilar to its parent(s);</li><li>Comparing 2 HVs to detect whether they are more (dis)similar than expected by chance.</li></ul><h2 id="1.-Hypervector-Creation"><a class="docs-heading-anchor" href="#1.-Hypervector-Creation">1. Hypervector Creation</a><a id="1.-Hypervector-Creation-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Hypervector-Creation" title="Permalink"></a></h2><h3 id="Bipolar-Hypervectors"><a class="docs-heading-anchor" href="#Bipolar-Hypervectors">Bipolar Hypervectors</a><a id="Bipolar-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#Bipolar-Hypervectors" title="Permalink"></a></h3><p>In this tutorial, we&#39;ll focus on <strong>bipolar hypervectors</strong> - vectors containing only -1s and +1s. A typical bipolar hypervector has dimension <span>$D$</span> (e.g., <span>$D = 10,000$</span>) where each element is randomly assigned:</p><p class="math-container">\[\mathbf{h} \in \{-1,+1\}^D\]</p><p>For example, a 8-dimensional bipolar hypervector might look like: <span>$\mathbf{h} = [+1, -1, +1, +1, -1, -1, +1, -1]$</span></p><p>To generate a bipolar hypervector with HyperdimensionalComputing.jl package, you can do the following:</p><pre><code class="language-julia hljs">using HyperdimensionalComputing
 
-graded_hdv = GradedHDV(Float32, 1000)
-println(&quot;Graded HDV first 10 elements: &quot;, graded_hdv.v[1:10])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Graded bipolar HDV first 10 elements: Float32[-0.77560836, -0.0038191676, 0.018963993, 0.63681084, 0.37085956, 0.53220516, 0.21195585, 0.5194147, -0.7629121, -0.20227802]
-Graded HDV first 10 elements: Float32[0.73250216, 0.79970753, 0.3195046, 0.47693235, 0.4899373, 0.34311774, 0.4876659, 0.59544116, 0.41792542, 0.75111973]</code></pre><h2 id=".-Operations-over-Hypervectors"><a class="docs-heading-anchor" href="#.-Operations-over-Hypervectors">2. Operations over Hypervectors</a><a id=".-Operations-over-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#.-Operations-over-Hypervectors" title="Permalink"></a></h2><p>Hyperdimensional computing relies on three fundamental operations: bundling (aggregation), binding, and shifting (permutation).</p><h3 id=".1-Bundling/Aggregation"><a class="docs-heading-anchor" href="#.1-Bundling/Aggregation">2.1 Bundling/Aggregation</a><a id=".1-Bundling/Aggregation-1"></a><a class="docs-heading-anchor-permalink" href="#.1-Bundling/Aggregation" title="Permalink"></a></h3><p>Bundling combines multiple vectors into a single vector that is similar to all input vectors. This is useful for creating superposition representations.</p><p>Create some sample vectors</p><pre><code class="language-julia hljs">hdv1 = BipolarHDV(100)
-hdv2 = BipolarHDV(100)
-hdv3 = BipolarHDV(100)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">100-element BipolarHDV:
- -1
+h = BipolarHDV()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">10000-element BipolarHDV:
+  1
+  1
  -1
   1
   1
  -1
  -1
-  1
   1
  -1
   1
@@ -27,267 +16,115 @@ hdv3 = BipolarHDV(100)</code></pre><pre class="documenter-example-output"><code 
   1
  -1
  -1
-  1
  -1
- -1
-  1
-  1
- -1</code></pre><p>Bundle vectors using the + operator</p><pre><code class="language-julia hljs">bundled = hdv1 + hdv2
-println(&quot;Bundled vector size: &quot;, size(bundled))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Bundled vector size: (100,)</code></pre><p>Bundle multiple vectors using aggregate</p><pre><code class="language-julia hljs">multi_bundled = aggregate([hdv1, hdv2, hdv3])
-println(&quot;Multi-bundled vector size: &quot;, size(multi_bundled))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Multi-bundled vector size: (100,)</code></pre><h3 id=".2-Binding"><a class="docs-heading-anchor" href="#.2-Binding">2.2 Binding</a><a id=".2-Binding-1"></a><a class="docs-heading-anchor-permalink" href="#.2-Binding" title="Permalink"></a></h3><p>Binding combines vectors to create a new vector that is dissimilar to both inputs. This operation is used to associate different pieces of information.</p><p>Bind two vectors using the * operator</p><pre><code class="language-julia hljs">bound = hdv1 * hdv2
-println(&quot;Bound vector size: &quot;, size(bound))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Bound vector size: (100,)</code></pre><p>Bind multiple vectors</p><pre><code class="language-julia hljs">multi_bound = bind([hdv1, hdv2, hdv3])
-println(&quot;Multi-bound vector size: &quot;, size(multi_bound))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Multi-bound vector size: (100,)</code></pre><h3 id=".3-Shifting-(Permutation)"><a class="docs-heading-anchor" href="#.3-Shifting-(Permutation)">2.3 Shifting (Permutation)</a><a id=".3-Shifting-(Permutation)-1"></a><a class="docs-heading-anchor-permalink" href="#.3-Shifting-(Permutation)" title="Permalink"></a></h3><p>Shifting performs cyclic permutation of vector elements, which is useful for encoding sequences.</p><p>Shift vector by 5 positions</p><pre><code class="language-julia hljs">shifted = Π(hdv1, 5)
-println(&quot;Shifted vector has same size: &quot;, size(shifted) == size(hdv1))</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Shifted vector has same size: true</code></pre><p>In-place shifting</p><pre><code class="language- hljs">Π!(hdv1, 3)
-println(&quot;In-place shifted vector offset: &quot;, hdv1.offset)</code></pre><h3 id=".4-Similarity-Measurement"><a class="docs-heading-anchor" href="#.4-Similarity-Measurement">2.4 Similarity Measurement</a><a id=".4-Similarity-Measurement-1"></a><a class="docs-heading-anchor-permalink" href="#.4-Similarity-Measurement" title="Permalink"></a></h3><p>We can measure similarity between vectors to determine how related they are.</p><p>Create two similar vectors (one is a shifted version of the other)</p><pre><code class="language-julia hljs">base_vector = BipolarHDV(1000)
-shifted_vector = Π(base_vector, 1)
-random_vector = BipolarHDV(1000)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1000-element BipolarHDV:
-  1
  -1
  -1
   1
  -1
- -1
-  1
-  1
-  1
- -1
-  ⋮
- -1
- -1
+ -1</code></pre><p>This will create a random vector of -1s and +1s of 10.000 dimensions.</p><h3 id="Key-Properties"><a class="docs-heading-anchor" href="#Key-Properties">Key Properties</a><a id="Key-Properties-1"></a><a class="docs-heading-anchor-permalink" href="#Key-Properties" title="Permalink"></a></h3><p><strong>Quasi-orthogonality</strong>: Randomly generated bipolar hypervectors are approximately orthogonal to each other. In high dimensions, the probability that two random bipolar vectors are similar becomes vanishingly small - like finding two identical snowflakes.</p><p><strong>Distance Preservation</strong>: The cosine similarity between random bipolar hypervectors follows a normal distribution centered around 0.</p><h2 id="2.-Fundamental-Operations"><a class="docs-heading-anchor" href="#2.-Fundamental-Operations">2. Fundamental Operations</a><a id="2.-Fundamental-Operations-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Fundamental-Operations" title="Permalink"></a></h2><p>HDC uses three primary operations that preserve the hyperdimensional properties:</p><h3 id="2.1-Bundling-(Superposition)"><a class="docs-heading-anchor" href="#2.1-Bundling-(Superposition)">2.1 Bundling (Superposition)</a><a id="2.1-Bundling-(Superposition)-1"></a><a class="docs-heading-anchor-permalink" href="#2.1-Bundling-(Superposition)" title="Permalink"></a></h3><p><strong>Bundling</strong> combines multiple hypervectors to create a summary vector that contains information from all inputs. Think of it as creating a &quot;blend&quot; that retains traces of all ingredients.</p><p>For bipolar vectors, bundling uses <strong>majority voting</strong>:</p><p class="math-container">\[\text{Bundle}(\mathbf{h_1}, \mathbf{h_2}, ..., \mathbf{h_n})_i = \begin{cases}
++1 &amp; \text{if } \sum_{j=1}^{n} h_{j,i} &gt; 0 \\
+-1 &amp; \text{otherwise}
+\end{cases}\]</p><p><strong>Example</strong>: Bundling three 8-dimensional vectors:</p><ul><li><p class="math-container">\[\mathbf{a} = [+1, -1, +1, +1, -1, -1, +1, -1]\]</p></li><li><p class="math-container">\[\mathbf{b} = [-1, +1, +1, -1, +1, -1, +1, +1]\]</p></li><li><p class="math-container">\[\mathbf{c} = [+1, +1, -1, +1, -1, +1, +1, -1]\]</p></li></ul><p>Result: <span>$\text{Bundle}(\mathbf{a}, \mathbf{b}, \mathbf{c}) = [+1, +1, +1, +1, -1, -1, +1, -1]$</span></p><p>In HyperdimensionalComputing.jl, this is done as follows:</p><pre><code class="language-julia hljs">h₁ = BipolarHDV([ 1, -1,  1,  1, -1, -1,  1, -1])
+h₂ = BipolarHDV([-1,  1,  1, -1,  1, -1,  1,  1])
+h₃ = BipolarHDV([ 1,  1, -1,  1, -1,  1,  1, -1])
+aggregate([h₁, h₂, h₃])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element BipolarHDV:
   1
   1
   1
   1
  -1
+ -1
   1
-  1</code></pre><p>Calculate similarities</p><pre><code class="language-julia hljs">sim_shifted = similarity(base_vector, shifted_vector)
-sim_random = similarity(base_vector, random_vector)
+ -1</code></pre><p>You can also do the same using the <code>+</code> operator:</p><pre><code class="language-julia hljs">h₁ + h₂ + h₃</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element BipolarHDV:
+  1
+  1
+  1
+  1
+ -1
+ -1
+  1
+ -1</code></pre><h3 id="2.2-Binding"><a class="docs-heading-anchor" href="#2.2-Binding">2.2 Binding</a><a id="2.2-Binding-1"></a><a class="docs-heading-anchor-permalink" href="#2.2-Binding" title="Permalink"></a></h3><p><strong>Binding</strong> creates associations between hypervectors, similar to forming key-value pairs. The bound result is dissimilar to both inputs, but can be &quot;unbound&quot; using one input to retrieve the other.</p><p>For bipolar vectors, binding uses <strong>element-wise multiplication</strong>:</p><p class="math-container">\[\text{Bind}(\mathbf{a}, \mathbf{b}) = \mathbf{a} \odot \mathbf{b}\]</p><p><strong>Example</strong>:</p><ul><li><p class="math-container">\[\mathbf{a} = [+1, -1, +1, +1, -1, -1, +1, -1]\]</p></li><li><p class="math-container">\[\mathbf{b} = [-1, +1, +1, -1, +1, -1, +1, +1]\]</p></li><li><p class="math-container">\[\mathbf{a} \odot \mathbf{b} = [-1, -1, +1, -1, -1, +1, +1, -1]\]</p></li></ul><p>In HyperdimensionalComputing.jl, binding can be done using the <code>bind</code> function: <code>*</code> operators:</p><pre><code class="language-julia hljs">bound = bind([h₁, h₂])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element BipolarHDV:
+ -1
+ -1
+  1
+ -1
+ -1
+  1
+  1
+ -1</code></pre><p>or the <code>*</code> operator:</p><pre><code class="language-julia hljs">h₁ * h₂</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element BipolarHDV:
+ -1
+ -1
+  1
+ -1
+ -1
+  1
+  1
+ -1</code></pre><p><strong>Unbinding</strong>: Since element-wise multiplication is its own inverse for bipolar vectors, <span>$(\mathbf{a} \odot \mathbf{b}) \odot \mathbf{a} = \mathbf{b}$</span>, we can unbind information from a hypervector as follows:</p><pre><code class="language-julia hljs">retrieved = bound * h₁</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element BipolarHDV:
+ -1
+  1
+  1
+ -1
+  1
+ -1
+  1
+  1</code></pre><pre><code class="language-julia hljs">h₂ == retrieved</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">true</code></pre><h3 id="2.3-Shifting/Permutation"><a class="docs-heading-anchor" href="#2.3-Shifting/Permutation">2.3 Shifting/Permutation</a><a id="2.3-Shifting/Permutation-1"></a><a class="docs-heading-anchor-permalink" href="#2.3-Shifting/Permutation" title="Permalink"></a></h3><p><strong>Shifting</strong> (or permutation) creates new hypervectors that are orthogonal to the original while preserving structure. It&#39;s like rearranging the elements according to a fixed pattern.</p><p>For bipolar vectors, a common approach is <strong>circular shifting</strong>:</p><p class="math-container">\[\text{Shift}(\mathbf{h}, k)_i = h_{(i-k) \bmod D}\]</p><p><strong>Example</strong> with right shift by 2:</p><ul><li>Original: <span>$[+1, -1, +1, +1, -1, -1, +1, -1]$</span></li><li>Shifted: <span>$[+1, -1, +1, -1, +1, +1, -1, -1]$</span></li></ul><p>In HyperdimensionalComputing.jl, this is done with the <code>Π</code> (<code>\Pi</code>) operator:</p><pre><code class="language-julia hljs">Π(h₁, 2)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element BipolarHDV:
+  1
+ -1
+  1
+ -1
+  1
+  1
+ -1
+ -1</code></pre><h3 id="2.4-Similarity-Measurement"><a class="docs-heading-anchor" href="#2.4-Similarity-Measurement">2.4 Similarity Measurement</a><a id="2.4-Similarity-Measurement-1"></a><a class="docs-heading-anchor-permalink" href="#2.4-Similarity-Measurement" title="Permalink"></a></h3><p>For classification and retrieval, we measure similarity using <strong>cosine similarity</strong> for bipolar vectors:</p><p class="math-container">\[\text{Similarity}(\mathbf{a}, \mathbf{b}) = \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}||\mathbf{b}|} = \frac{\mathbf{a} \cdot \mathbf{b}}{D}\]</p><p>Since bipolar vectors have unit magnitude (<span>$|\mathbf{h}| = \sqrt{D}$</span>), the cosine similarity simplifies to the normalized dot product:</p><p class="math-container">\[\text{Similarity}(\mathbf{a}, \mathbf{b}) = \frac{\mathbf{a} \cdot \mathbf{b}}{D}\]</p><pre><code class="language-julia hljs">sim = similarity(h₁, h₂)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">-0.24999999999999994</code></pre><h2 id="3.-Encoding-Data-as-Hypervectors"><a class="docs-heading-anchor" href="#3.-Encoding-Data-as-Hypervectors">3. Encoding Data as Hypervectors</a><a id="3.-Encoding-Data-as-Hypervectors-1"></a><a class="docs-heading-anchor-permalink" href="#3.-Encoding-Data-as-Hypervectors" title="Permalink"></a></h2><p>The true power of HDC emerges when we combine the fundamental operations to encode complex data structures as hypervectors. By creatively applying bundling, binding, and shifting, we can represent virtually any type of information - from sequences and hierarchies to graphs and associative memories. The operations act as building blocks that can be composed in countless ways, limited only by our imagination and the specific requirements of our application. Let&#39;s explore two fundamental encoding strategies that demonstrate this flexibility.</p><h3 id="3.1-N-gram-Encoding"><a class="docs-heading-anchor" href="#3.1-N-gram-Encoding">3.1 N-gram Encoding</a><a id="3.1-N-gram-Encoding-1"></a><a class="docs-heading-anchor-permalink" href="#3.1-N-gram-Encoding" title="Permalink"></a></h3><p><strong>N-grams</strong> represent sequences by encoding the order of elements. This is particularly useful for text processing where word order matters.</p><p><strong>Approach</strong>:</p><ol><li>Assign a unique hypervector to each symbol</li><li>Use shifting to represent position</li><li>Bundle all positions to create the n-gram</li></ol><p><strong>Mathematical formulation</strong> for trigram &quot;ABC&quot;:</p><p class="math-container">\[\mathbf{trigram} = \mathbf{A} \odot \text{Shift}(\mathbf{B}, 1) \odot \text{Shift}(\mathbf{C}, 2)\]</p><p><strong>Example</strong>: For the word &quot;CAT&quot;:</p><ul><li>Bigrams: &quot;CA&quot;, &quot;AT&quot;</li><li><p class="math-container">\[\mathbf{CA} = \mathbf{C} \odot \text{Shift}(\mathbf{A}, 1)\]</p></li><li><p class="math-container">\[\mathbf{AT} = \mathbf{A} \odot \text{Shift}(\mathbf{T}, 1)\]</p></li><li>Word representation: <span>$\text{Bundle}(\mathbf{CA}, \mathbf{AT})$</span></li></ul><p>function encode<em>ngrams(text::String, n::Int, dimension::Int=1000)     # Create symbol dictionary     symbols = Dict{Char, Vector{Int}}()     for char in unique(text)         symbols[char] = random</em>bipolar_vector(dimension)     end</p><pre><code class="nohighlight hljs"># Generate n-grams
+ngram_vectors = Vector{Vector{Int}}()
 
-println(&quot;Similarity with shifted version: &quot;, sim_shifted)
-println(&quot;Similarity with random vector: &quot;, sim_random)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Similarity with shifted version: 0.024
-Similarity with random vector: 0.014</code></pre><h2 id=".-Encoding-Structures"><a class="docs-heading-anchor" href="#.-Encoding-Structures">3. Encoding Structures</a><a id=".-Encoding-Structures-1"></a><a class="docs-heading-anchor-permalink" href="#.-Encoding-Structures" title="Permalink"></a></h2><p>Now we&#39;ll explore how to encode different data structures using hypervectors.</p><h3 id=".1-Encoding-Sets"><a class="docs-heading-anchor" href="#.1-Encoding-Sets">3.1 Encoding Sets</a><a id=".1-Encoding-Sets-1"></a><a class="docs-heading-anchor-permalink" href="#.1-Encoding-Sets" title="Permalink"></a></h3><p>Sets can be encoded by bundling the hypervectors representing each element.</p><p>Create a vocabulary of elements</p><pre><code class="language-julia hljs">vocabulary = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;]
-element_hdvs = Dict(char =&gt; BipolarHDV(1000) for char in vocabulary)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Dict{Char, BipolarHDV} with 5 entries:
-  &#39;a&#39; =&gt; [-1, -1, -1, -1, 1, -1, -1, 1, 1, -1  …  1, -1, 1, 1, 1, 1, 1, -1, 1, …
-  &#39;c&#39; =&gt; [-1, -1, -1, 1, -1, -1, -1, 1, -1, 1  …  1, 1, 1, -1, 1, -1, -1, 1, 1,…
-  &#39;d&#39; =&gt; [1, 1, -1, -1, 1, 1, 1, 1, 1, -1  …  1, -1, 1, 1, 1, -1, -1, 1, -1, -1]
-  &#39;e&#39; =&gt; [1, 1, -1, 1, -1, -1, 1, -1, 1, 1  …  1, -1, 1, 1, -1, -1, 1, -1, 1, 1]
-  &#39;b&#39; =&gt; [-1, 1, -1, -1, -1, -1, -1, 1, -1, -1  …  1, -1, -1, 1, -1, 1, -1, 1, …</code></pre><p>Encode a set {a, c, e}</p><pre><code class="language-julia hljs">set1 = [&#39;a&#39;, &#39;c&#39;, &#39;e&#39;]
-set1_encoding = aggregate([element_hdvs[char] for char in set1])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1000-element BipolarHDV:
- -1
- -1
- -1
-  1
- -1
- -1
- -1
-  1
-  1
-  1
-  ⋮
- -1
-  1
-  1
-  1
- -1
-  1
- -1
-  1
-  1</code></pre><p>Encode another set {b, c, d}</p><pre><code class="language-julia hljs">set2 = [&#39;b&#39;, &#39;c&#39;, &#39;d&#39;]
-set2_encoding = aggregate([element_hdvs[char] for char in set2])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1000-element BipolarHDV:
- -1
-  1
- -1
- -1
- -1
- -1
- -1
-  1
- -1
- -1
-  ⋮
- -1
-  1
-  1
-  1
- -1
- -1
-  1
-  1
-  1</code></pre><p>Check similarity (should be low since sets have little overlap)</p><pre><code class="language-julia hljs">set_similarity = similarity(set1_encoding, set2_encoding)
-println(&quot;Similarity between sets {a,c,e} and {b,c,d}: &quot;, set_similarity)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Similarity between sets {a,c,e} and {b,c,d}: 0.08442184540919334</code></pre><p>Encode a more similar set {a, c, d}</p><pre><code class="language-julia hljs">set3 = [&#39;a&#39;, &#39;c&#39;, &#39;d&#39;]
-set3_encoding = aggregate([element_hdvs[char] for char in set3])
-set3_similarity = similarity(set1_encoding, set3_encoding)
-println(&quot;Similarity between sets {a,c,e} and {a,c,d}: &quot;, set3_similarity)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Similarity between sets {a,c,e} and {a,c,d}: 0.17324353754169725</code></pre><h3 id=".2-Encoding-Key-Value-Pairs"><a class="docs-heading-anchor" href="#.2-Encoding-Key-Value-Pairs">3.2 Encoding Key-Value Pairs</a><a id=".2-Encoding-Key-Value-Pairs-1"></a><a class="docs-heading-anchor-permalink" href="#.2-Encoding-Key-Value-Pairs" title="Permalink"></a></h3><p>Key-value pairs can be encoded by binding the key and value vectors, then bundling multiple pairs.</p><p>Create vocabulary for keys and values</p><pre><code class="language-julia hljs">keys = [&quot;name&quot;, &quot;age&quot;, &quot;city&quot;]
-values = [&quot;Alice&quot;, &quot;25&quot;, &quot;Boston&quot;, &quot;Bob&quot;, &quot;30&quot;, &quot;Chicago&quot;]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">6-element Vector{String}:
- &quot;Alice&quot;
- &quot;25&quot;
- &quot;Boston&quot;
- &quot;Bob&quot;
- &quot;30&quot;
- &quot;Chicago&quot;</code></pre><p>Create hypervectors for keys and values</p><pre><code class="language-julia hljs">key_hdvs = Dict(k =&gt; BipolarHDV(1000) for k in keys)
-value_hdvs = Dict(v =&gt; BipolarHDV(1000) for v in values)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Dict{String, BipolarHDV} with 6 entries:
-  &quot;Chicago&quot; =&gt; [-1, 1, 1, -1, -1, 1, -1, -1, 1, 1  …  1, -1, 1, 1, -1, -1, 1, -…
-  &quot;Alice&quot;   =&gt; [-1, -1, -1, -1, -1, 1, -1, 1, -1, -1  …  -1, -1, 1, 1, -1, 1, -…
-  &quot;25&quot;      =&gt; [1, 1, 1, 1, 1, -1, -1, -1, -1, -1  …  1, -1, 1, -1, 1, -1, -1, …
-  &quot;Boston&quot;  =&gt; [1, -1, 1, -1, 1, 1, 1, -1, -1, -1  …  -1, 1, -1, -1, 1, 1, 1, 1…
-  &quot;Bob&quot;     =&gt; [1, -1, -1, -1, 1, -1, 1, 1, 1, 1  …  -1, 1, 1, 1, 1, 1, 1, 1, -…
-  &quot;30&quot;      =&gt; [-1, 1, -1, 1, -1, 1, 1, -1, 1, 1  …  1, 1, 1, -1, -1, 1, 1, 1, …</code></pre><p>Encode a record: {name: Alice, age: 25, city: Boston}</p><pre><code class="language-julia hljs">record1_pairs = [
-    key_hdvs[&quot;name&quot;] * value_hdvs[&quot;Alice&quot;],
-    key_hdvs[&quot;age&quot;] * value_hdvs[&quot;25&quot;],
-    key_hdvs[&quot;city&quot;] * value_hdvs[&quot;Boston&quot;]
-]
-record1_encoding = aggregate(record1_pairs)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1000-element BipolarHDV:
-  1
- -1
- -1
- -1
-  1
-  1
- -1
-  1
- -1
-  1
-  ⋮
-  1
- -1
-  1
-  1
- -1
- -1
-  1
- -1
-  1</code></pre><p>Encode another record: {name: Bob, age: 30, city: Chicago}</p><pre><code class="language-julia hljs">record2_pairs = [
-    key_hdvs[&quot;name&quot;] * value_hdvs[&quot;Bob&quot;],
-    key_hdvs[&quot;age&quot;] * value_hdvs[&quot;30&quot;],
-    key_hdvs[&quot;city&quot;] * value_hdvs[&quot;Chicago&quot;]
-]
-record2_encoding = aggregate(record2_pairs)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1000-element BipolarHDV:
- -1
-  1
- -1
- -1
- -1
- -1
-  1
-  1
-  1
- -1
-  ⋮
- -1
- -1
- -1
- -1
- -1
-  1
- -1
-  1
-  1</code></pre><p>Check similarity between records</p><pre><code class="language-julia hljs">record_similarity = similarity(record1_encoding, record2_encoding)
-println(&quot;Similarity between records: &quot;, record_similarity)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Similarity between records: -0.02537839907931502</code></pre><p>Query a record: What&#39;s the name in record1? We bind the record with the key to retrieve the value</p><pre><code class="language-julia hljs">name_query = record1_encoding * key_hdvs[&quot;name&quot;]
-name_similarity_alice = similarity(name_query, value_hdvs[&quot;Alice&quot;])
-name_similarity_bob = similarity(name_query, value_hdvs[&quot;Bob&quot;])
+for i in 1:(length(text) - n + 1)
+    ngram = text[i:i+n-1]
+    ngram_vector = symbols[ngram[1]]
 
-println(&quot;Name query similarity with Alice: &quot;, name_similarity_alice)
-println(&quot;Name query similarity with Bob: &quot;, name_similarity_bob)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Name query similarity with Alice: 0.508
-Name query similarity with Bob: -0.042</code></pre><h3 id=".3-Encoding-Strings"><a class="docs-heading-anchor" href="#.3-Encoding-Strings">3.3 Encoding Strings</a><a id=".3-Encoding-Strings-1"></a><a class="docs-heading-anchor-permalink" href="#.3-Encoding-Strings" title="Permalink"></a></h3><p>Strings can be encoded using n-grams, which capture local sequential patterns.</p><p>Create character vocabulary</p><pre><code class="language-julia hljs">chars = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;, &#39;f&#39;, &#39;g&#39;, &#39;h&#39;, &#39;i&#39;, &#39;j&#39;, &#39;k&#39;, &#39;l&#39;, &#39;m&#39;,
-         &#39;n&#39;, &#39;o&#39;, &#39;p&#39;, &#39;q&#39;, &#39;r&#39;, &#39;s&#39;, &#39;t&#39;, &#39;u&#39;, &#39;v&#39;, &#39;w&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39; &#39;]
-char_hdvs = Dict(c =&gt; BipolarHDV(1000) for c in chars)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Dict{Char, BipolarHDV} with 27 entries:
-  &#39;n&#39; =&gt; [-1, 1, 1, 1, -1, -1, 1, -1, 1, -1  …  -1, 1, 1, 1, 1, 1, 1, -1, 1, 1]
-  &#39;f&#39; =&gt; [1, -1, 1, -1, -1, -1, -1, -1, 1, -1  …  1, 1, -1, -1, 1, 1, -1, -1, 1…
-  &#39;w&#39; =&gt; [-1, -1, 1, -1, 1, 1, -1, 1, 1, 1  …  -1, -1, 1, -1, -1, 1, 1, -1, 1, …
-  &#39;d&#39; =&gt; [1, 1, -1, 1, -1, -1, 1, -1, 1, 1  …  1, -1, 1, -1, 1, 1, -1, -1, -1, …
-  &#39;e&#39; =&gt; [1, 1, -1, 1, -1, 1, -1, -1, -1, 1  …  1, 1, -1, -1, -1, 1, 1, 1, 1, 1]
-  &#39;o&#39; =&gt; [1, 1, 1, -1, 1, 1, 1, 1, 1, -1  …  1, -1, -1, -1, -1, 1, -1, 1, -1, -…
-  &#39;h&#39; =&gt; [1, 1, 1, -1, 1, -1, 1, -1, 1, -1  …  1, 1, -1, 1, -1, 1, 1, 1, -1, 1]
-  &#39;j&#39; =&gt; [-1, 1, 1, 1, -1, -1, -1, -1, -1, 1  …  1, 1, -1, -1, 1, -1, -1, -1, -…
-  &#39;i&#39; =&gt; [-1, 1, -1, -1, 1, -1, 1, -1, -1, 1  …  1, -1, 1, 1, -1, -1, 1, 1, 1, …
-  &#39;k&#39; =&gt; [-1, -1, -1, -1, 1, 1, 1, 1, -1, -1  …  -1, -1, 1, -1, 1, 1, 1, -1, -1…
-  &#39;r&#39; =&gt; [-1, -1, -1, -1, 1, 1, -1, 1, -1, 1  …  1, 1, -1, 1, 1, 1, -1, 1, -1, …
-  &#39;s&#39; =&gt; [1, 1, 1, -1, -1, 1, -1, 1, -1, -1  …  -1, 1, -1, -1, -1, -1, -1, 1, -…
-  &#39;t&#39; =&gt; [-1, -1, -1, -1, -1, -1, 1, 1, 1, 1  …  -1, -1, 1, -1, 1, -1, -1, -1, …
-  &#39;q&#39; =&gt; [1, -1, 1, 1, 1, 1, 1, 1, -1, 1  …  1, -1, 1, 1, -1, 1, -1, 1, 1, 1]
-  &#39;y&#39; =&gt; [-1, -1, -1, 1, 1, -1, 1, 1, 1, -1  …  -1, 1, -1, 1, 1, 1, 1, 1, -1, 1]
-  &#39; &#39; =&gt; [1, -1, 1, -1, 1, -1, 1, 1, -1, -1  …  -1, -1, -1, 1, -1, 1, 1, 1, 1, …
-  &#39;a&#39; =&gt; [1, 1, 1, -1, 1, 1, 1, 1, 1, -1  …  1, -1, 1, -1, -1, 1, 1, 1, -1, -1]
-  &#39;c&#39; =&gt; [-1, -1, 1, -1, 1, -1, -1, 1, 1, 1  …  1, 1, -1, 1, -1, -1, -1, -1, 1,…
-  &#39;p&#39; =&gt; [1, -1, -1, 1, -1, 1, -1, -1, -1, 1  …  -1, -1, -1, 1, 1, -1, 1, -1, 1…
-  ⋮   =&gt; ⋮</code></pre><p>Compute 3-grams for encoding strings</p><pre><code class="language- hljs">trigrams = compute_3_grams(char_hdvs)
-println(&quot;Trigram embedding order: &quot;, order(trigrams))</code></pre><p>Encode some strings</p><pre><code class="language-julia hljs">string1 = &quot;hello world&quot;
-string2 = &quot;hello there&quot;
-string3 = &quot;goodbye world&quot;</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&quot;goodbye world&quot;</code></pre><p>Convert strings to character arrays</p><pre><code class="language-julia hljs">seq1 = collect(string1)
-seq2 = collect(string2)
-seq3 = collect(string3)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">13-element Vector{Char}:
- &#39;g&#39;: ASCII/Unicode U+0067 (category Ll: Letter, lowercase)
- &#39;o&#39;: ASCII/Unicode U+006F (category Ll: Letter, lowercase)
- &#39;o&#39;: ASCII/Unicode U+006F (category Ll: Letter, lowercase)
- &#39;d&#39;: ASCII/Unicode U+0064 (category Ll: Letter, lowercase)
- &#39;b&#39;: ASCII/Unicode U+0062 (category Ll: Letter, lowercase)
- &#39;y&#39;: ASCII/Unicode U+0079 (category Ll: Letter, lowercase)
- &#39;e&#39;: ASCII/Unicode U+0065 (category Ll: Letter, lowercase)
- &#39; &#39;: ASCII/Unicode U+0020 (category Zs: Separator, space)
- &#39;w&#39;: ASCII/Unicode U+0077 (category Ll: Letter, lowercase)
- &#39;o&#39;: ASCII/Unicode U+006F (category Ll: Letter, lowercase)
- &#39;r&#39;: ASCII/Unicode U+0072 (category Ll: Letter, lowercase)
- &#39;l&#39;: ASCII/Unicode U+006C (category Ll: Letter, lowercase)
- &#39;d&#39;: ASCII/Unicode U+0064 (category Ll: Letter, lowercase)</code></pre><p>Encode strings using trigrams</p><pre><code class="language-julia hljs">encoding1 = sequence_embedding(seq1, trigrams)
-encoding2 = sequence_embedding(seq2, trigrams)
-encoding3 = sequence_embedding(seq3, trigrams)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1000-element BipolarHDV:
- -1
-  1
- -1
-  0
-  1
-  1
-  1
-  0
- -1
-  1
-  ⋮
- -1
-  0
- -1
- -1
-  1
- -1
-  0
-  0
- -1</code></pre><p>Check similarities</p><pre><code class="language-julia hljs">sim_hello = similarity(encoding1, encoding2)  # Both start with &quot;hello&quot;
-sim_world = similarity(encoding1, encoding3)  # Both end with &quot;world&quot;
-sim_different = similarity(encoding2, encoding3)  # Quite different
+    for j in 2:length(ngram)
+        shifted = ∏(symbols[ngram[j]], j-1)
+        ngram_vector = bind(ngram_vector, shifted)
+    end
 
-println(&quot;Similarity &#39;hello world&#39; vs &#39;hello there&#39;: &quot;, sim_hello)
-println(&quot;Similarity &#39;hello world&#39; vs &#39;goodbye world&#39;: &quot;, sim_world)
-println(&quot;Similarity &#39;hello there&#39; vs &#39;goodbye world&#39;: &quot;, sim_different)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Similarity &#39;hello world&#39; vs &#39;hello there&#39;: 0.4705267499143997
-Similarity &#39;hello world&#39; vs &#39;goodbye world&#39;: 0.24433121184128787
-Similarity &#39;hello there&#39; vs &#39;goodbye world&#39;: 0.009428740401281673</code></pre><h3 id=".4-Basic-Learning-Example"><a class="docs-heading-anchor" href="#.4-Basic-Learning-Example">3.4 Basic Learning Example</a><a id=".4-Basic-Learning-Example-1"></a><a class="docs-heading-anchor-permalink" href="#.4-Basic-Learning-Example" title="Permalink"></a></h3><p>We can use the encoded vectors for simple classification tasks.</p><p>Create training data</p><pre><code class="language-julia hljs">training_strings = [&quot;apple banana&quot;, &quot;banana cherry&quot;, &quot;cherry date&quot;, &quot;date elderberry&quot;]
-training_labels = [&quot;fruit_pair_1&quot;, &quot;fruit_pair_2&quot;, &quot;fruit_pair_3&quot;, &quot;fruit_pair_4&quot;]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4-element Vector{String}:
- &quot;fruit_pair_1&quot;
- &quot;fruit_pair_2&quot;
- &quot;fruit_pair_3&quot;
- &quot;fruit_pair_4&quot;</code></pre><p>Encode training strings</p><pre><code class="language-julia hljs">training_encodings = [sequence_embedding(collect(s), trigrams) for s in training_strings]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4-element Vector{BipolarHDV}:
- [1, 1, -1, -1, 1, 1, -1, 1, 1, -1  …  -1, 1, 1, 1, -1, -1, -1, -1, -1, 1]
- [-1, 0, 0, -1, 0, 0, -1, 1, 1, 0  …  0, 0, -1, 1, 0, -1, 1, -1, 1, 0]
- [-1, -1, 1, -1, 1, -1, -1, 1, 1, -1  …  0, 1, 1, 0, 0, 1, 1, 0, 0, 0]
- [-1, -1, -1, 0, -1, 0, 1, 1, 0, 1  …  0, -1, -1, 1, 1, 0, 1, -1, 1, 1]</code></pre><p>Train a simple classifier</p><pre><code class="language- hljs">centers = train(training_labels, training_encodings)
-println(&quot;Trained centers for classes: &quot;, keys(centers))</code></pre><p>Test on new data</p><pre><code class="language-julia hljs">test_string = &quot;apple cherry&quot;  # Similar to training examples
-test_encoding = sequence_embedding(collect(test_string), trigrams)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">1000-element BipolarHDV:
- -1
- -1
- -1
- -1
-  1
- -1
- -1
-  1
-  1
- -1
-  ⋮
-  1
- -1
-  1
-  1
- -1
-  1
- -1
- -1
- -1</code></pre><p>Make prediction</p><pre><code class="language-julia hljs">prediction = predict(test_encoding, centers)
-println(&quot;Prediction for &#39;apple cherry&#39;: &quot;, prediction)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Prediction for &#39;apple cherry&#39;: fruit_pair_1</code></pre><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p>This tutorial covered the basics of hyperdimensional computing with HyperdimensionalComputing.jl:</p><ol><li><strong>Creating hypervectors</strong>: Different types (Bipolar, Binary, Real, Graded) for different applications</li><li><strong>Operations</strong>: Bundling for superposition, binding for association, shifting for sequences</li><li><strong>Encoding structures</strong>: Sets through bundling, key-value pairs through binding+bundling, strings through n-grams</li></ol><p>Hyperdimensional computing provides a powerful framework for representing and manipulating high-dimensional symbolic data, with applications in machine learning, cognitive architectures, and neuromorphic computing.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« HyperdimensionalComputing.jl</a><a class="docs-footer-nextpage" href="../whats-the-dollar-of-mexico/">What&#39;s the Dollar of Mexico? »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.6 on <span class="colophon-date" title="Saturday 12 July 2025 20:27">Saturday 12 July 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+    push!(ngram_vectors, ngram_vector)
+end
+
+return bundle(ngram_vectors)</code></pre><p>end</p><h1 id="Create-n-gram-encoding-for-a-sequence"><a class="docs-heading-anchor" href="#Create-n-gram-encoding-for-a-sequence">Create n-gram encoding for a sequence</a><a id="Create-n-gram-encoding-for-a-sequence-1"></a><a class="docs-heading-anchor-permalink" href="#Create-n-gram-encoding-for-a-sequence" title="Permalink"></a></h1><p>word<em>vector = encode</em>ngrams(&quot;CAT&quot;, 2) println(&quot;Encoded &#39;CAT&#39; with bigrams, vector length: &quot;, length(word_vector))</p><h3 id="3.2-Hash-Table-Encoding"><a class="docs-heading-anchor" href="#3.2-Hash-Table-Encoding">3.2 Hash Table Encoding</a><a id="3.2-Hash-Table-Encoding-1"></a><a class="docs-heading-anchor-permalink" href="#3.2-Hash-Table-Encoding" title="Permalink"></a></h3><p><strong>Hash tables</strong> in HDC map keys to values using binding, creating associative memories that can handle noise and incomplete queries.</p><p><strong>Construction</strong>:</p><ol><li>For each key-value pair <span>$(k_i, v_i)$</span>, create <span>$\mathbf{k_i} \odot \mathbf{v_i}$</span></li><li>Bundle all bound pairs: <span>$\mathbf{M} = \text{Bundle}(\mathbf{k_1} \odot \mathbf{v_1}, \mathbf{k_2} \odot \mathbf{v_2}, ...)$</span></li></ol><p><strong>Retrieval</strong>: To query key <span>$\mathbf{q}$</span>, compute <span>$\mathbf{M} \odot \mathbf{q}$</span> and find the closest stored value.</p><p><strong>Example</strong>: Storing animal-sound associations:</p><ul><li>Store: (&quot;dog&quot;, &quot;bark&quot;), (&quot;cat&quot;, &quot;meow&quot;), (&quot;cow&quot;, &quot;moo&quot;)</li><li>Memory: <span>$\mathbf{M} = \text{Bundle}(\mathbf{dog} \odot \mathbf{bark}, \mathbf{cat} \odot \mathbf{meow}, \mathbf{cow} \odot \mathbf{moo})$</span></li><li>Query &quot;dog&quot;: <span>$\mathbf{M} \odot \mathbf{dog} \approx \mathbf{bark}$</span></li></ul><p>function create<em>hash</em>table(key<em>value</em>pairs::Vector{Tuple{String, String}}, dimension::Int=1000)     # Create symbol dictionaries     keys = Dict{String, Vector{Int}}()     values = Dict{String, Vector{Int}}()</p><pre><code class="nohighlight hljs">for (k, v) in key_value_pairs
+    if !haskey(keys, k)
+        keys[k] = random_bipolar_vector(dimension)
+    end
+    if !haskey(values, v)
+        values[v] = random_bipolar_vector(dimension)
+    end
+end
+
+# Create bound pairs and bundle them
+bound_pairs = [bind(keys[k], values[v]) for (k, v) in key_value_pairs]
+memory = bundle(bound_pairs)
+
+return (memory, keys, values)</code></pre><p>end</p><p>function query<em>hash</em>table(memory::Vector{Int}, query<em>key::Vector{Int}, values::Dict{String, Vector{Int}})     # Unbind with query key     result = bind(memory, query</em>key)</p><pre><code class="nohighlight hljs"># Find most similar value
+best_match = &quot;&quot;
+best_similarity = -Inf
+
+for (value_name, value_vector) in values
+    sim = cosine_similarity(result, value_vector)
+    if sim &gt; best_similarity
+        best_similarity = sim
+        best_match = value_name
+    end
+end
+
+return best_match, best_similarity</code></pre><p>end</p><h1 id="Create-and-query-HDC-hash-table"><a class="docs-heading-anchor" href="#Create-and-query-HDC-hash-table">Create and query HDC hash table</a><a id="Create-and-query-HDC-hash-table-1"></a><a class="docs-heading-anchor-permalink" href="#Create-and-query-HDC-hash-table" title="Permalink"></a></h1><p>key<em>value</em>pairs = [(&quot;dog&quot;, &quot;bark&quot;), (&quot;cat&quot;, &quot;meow&quot;), (&quot;cow&quot;, &quot;moo&quot;)] memory, keys, values = create<em>hash</em>table(key<em>value</em>pairs)</p><h1 id="Query-the-hash-table"><a class="docs-heading-anchor" href="#Query-the-hash-table">Query the hash table</a><a id="Query-the-hash-table-1"></a><a class="docs-heading-anchor-permalink" href="#Query-the-hash-table" title="Permalink"></a></h1><p>result, similarity = query<em>hash</em>table(memory, keys[&quot;dog&quot;], values) println(&quot;Query &#39;dog&#39; result: &quot;, result, &quot; (similarity: &quot;, similarity, &quot;)&quot;)</p><h2 id="4.-Basic-Learning-via-Prototype-Generation"><a class="docs-heading-anchor" href="#4.-Basic-Learning-via-Prototype-Generation">4. Basic Learning via Prototype Generation</a><a id="4.-Basic-Learning-via-Prototype-Generation-1"></a><a class="docs-heading-anchor-permalink" href="#4.-Basic-Learning-via-Prototype-Generation" title="Permalink"></a></h2><h3 id="4.1-Sum-All-Hypervectors-Approach"><a class="docs-heading-anchor" href="#4.1-Sum-All-Hypervectors-Approach">4.1 Sum-All-Hypervectors Approach</a><a id="4.1-Sum-All-Hypervectors-Approach-1"></a><a class="docs-heading-anchor-permalink" href="#4.1-Sum-All-Hypervectors-Approach" title="Permalink"></a></h3><p>The simplest learning method creates <strong>class prototypes</strong> by bundling all training examples belonging to each class.</p><p><strong>Algorithm</strong>:</p><ol><li>For each class <span>$c$</span>, bundle all training examples: <span>$\mathbf{P_c} = \text{Bundle}(\mathbf{x_1}, \mathbf{x_2}, ..., \mathbf{x_n})$</span> where <span>$\mathbf{x_i} \in c$</span></li><li>For classification, compute similarity between test example and each prototype</li><li>Assign to the most similar class</li></ol><p><strong>Language Detection Example</strong>:</p><ul><li>English prototype: Bundle all English text hypervectors</li><li>Spanish prototype: Bundle all Spanish text hypervectors</li><li>French prototype: Bundle all French text hypervectors</li></ul><p>function train<em>prototypes(training</em>data::Dict{String, Vector{Vector{Int}}})     prototypes = Dict{String, Vector{Int}}()</p><pre><code class="nohighlight hljs">for (language, examples) in training_data
+    prototypes[language] = bundle(examples)
+end
+
+return prototypes</code></pre><p>end</p><p>function classify<em>text(test</em>vector::Vector{Int}, prototypes::Dict{String, Vector{Int}})     best<em>language = &quot;&quot;     best</em>similarity = -Inf</p><pre><code class="nohighlight hljs">for (language, prototype) in prototypes
+    sim = cosine_similarity(test_vector, prototype)
+    if sim &gt; best_similarity
+        best_similarity = sim
+        best_language = language
+    end
+end
+
+return best_language, best_similarity</code></pre><p>end</p><h1 id="Example-with-simulated-language-data"><a class="docs-heading-anchor" href="#Example-with-simulated-language-data">Example with simulated language data</a><a id="Example-with-simulated-language-data-1"></a><a class="docs-heading-anchor-permalink" href="#Example-with-simulated-language-data" title="Permalink"></a></h1><p>english<em>examples = [random</em>bipolar<em>vector(1000) for _ in 1:10] spanish</em>examples = [random<em>bipolar</em>vector(1000) for _ in 1:10] french<em>examples = [random</em>bipolar_vector(1000) for _ in 1:10]</p><p>training<em>data = Dict(     &quot;English&quot; =&gt; english</em>examples,     &quot;Spanish&quot; =&gt; spanish<em>examples,     &quot;French&quot; =&gt; french</em>examples )</p><h1 id="Train-prototypes-for-each-language"><a class="docs-heading-anchor" href="#Train-prototypes-for-each-language">Train prototypes for each language</a><a id="Train-prototypes-for-each-language-1"></a><a class="docs-heading-anchor-permalink" href="#Train-prototypes-for-each-language" title="Permalink"></a></h1><p>prototypes = train<em>prototypes(training</em>data)</p><h1 id="Classify-new-text"><a class="docs-heading-anchor" href="#Classify-new-text">Classify new text</a><a id="Classify-new-text-1"></a><a class="docs-heading-anchor-permalink" href="#Classify-new-text" title="Permalink"></a></h1><p>test<em>text = random</em>bipolar<em>vector(1000) predicted</em>language, similarity = classify<em>text(test</em>text, prototypes) println(&quot;Predicted language: &quot;, predicted_language, &quot; (similarity: &quot;, similarity, &quot;)&quot;)</p><h2 id="Summary"><a class="docs-heading-anchor" href="#Summary">Summary</a><a id="Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Summary" title="Permalink"></a></h2><p>Hyperdimensional Computing provides a robust framework for representing and processing information using high-dimensional bipolar vectors. The three fundamental operations (bundling, binding, and shifting) enable complex computations while maintaining interpretability and fault tolerance. Through encodings like n-grams and hash tables, HDC can handle structured data, while learning algorithms enable adaptive classification systems that improve with experience.</p><p>The power of HDC lies in its simplicity: using only basic operations on bipolar vectors, it can solve complex problems in machine learning, natural language processing, and cognitive computing while remaining transparent and interpretable.</p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« HyperdimensionalComputing.jl</a><a class="docs-footer-nextpage" href="../../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Monday 28 July 2025 09:26">Monday 28 July 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
