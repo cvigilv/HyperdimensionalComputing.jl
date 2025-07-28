@@ -23,7 +23,7 @@ repo_owner = split(repo_url, "/")[1]
 
 makedocs(;
     modules=[HyperdimensionalComputing],
-    authors="Steff Taelman, Dimi Boeckaerts",
+    authors="Carlos Vigil-Vásquez, Michiel Stock, Steff Taelman, Dimi Boeckaerts",
     repo="https://github.com/$repo_url/blob/{commit}{path}#{line}",
     sitename="HyperdimensionalComputing.jl",
     format=Documenter.HTML(;
@@ -36,7 +36,7 @@ makedocs(;
         "HyperdimensionalComputing.jl" => "index.md",
         "Examples" => [
 			"Introduction to HDC" => "examples/introduction-to-hdc.md",
-			"What's the Dollar of Mexico?" => "examples/whats-the-dollar-of-mexico.md"
+			# "What's the Dollar of Mexico?" => "examples/whats-the-dollar-of-mexico.md"
 		],
         "API" => "api.md",
     ],
