@@ -26,6 +26,8 @@ Base.getindex(hv::AbstractHV, i) = hv.v[i]
 Base.similar(hv::T) where {T<: AbstractHV} = T(length(hv)) 
 LinearAlgebra.norm(hv::AbstractHV) = norm(hv.v)
 LinearAlgebra.normalize!(hv::AbstractHV) = hv
+Base.hash(h::AbstractHV) = hash(v)
+
 
 get_vector(v::AbstractVector) = v
 get_vector(hv::AbstractHV) = hv.v
@@ -113,9 +115,13 @@ function GradedHV(n::Int=10_000, distr=graded_distr)
 end
 
 Base.similar(hv::GradedHV) = GradedHV(length(hv), graded_distr)
+
+# neutral element of a graded HV is 0.5
+empty_vector(hv::GradedHV) = fill!(zero(hv.v), 0.5)
+
 LinearAlgebra.normalize!(hv::GradedHV) = clamp!(hv.v, 0, 1)
 
-function empty_vector(hv::GradedHV)
+function Base.zeros(hv::GradedHV)
     v = similar(hv.v)
     return fill!(v, one(eltype(v))/2)
 end

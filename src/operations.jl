@@ -95,11 +95,11 @@ end
 
 # binary and bipolar: use majority
 function aggregate(hvr::Union{BinaryHV,BipolarHV}, hdvs, r)
-    m = length(hvr)
+    m = length(hdvs)
     for hv in hdvs
         r .+= hv.v
     end
-    if iseven(m)
+    if iseven(m)  # break ties
         r .+= bitrand(length(r))
     end
     hvr = similar(hvr)
@@ -241,3 +241,51 @@ end
 
 ρ(hv::AbstractHV, k=1) = shift(hv, k)
 ρ!(hv::AbstractHV, k=1) = shift!(hv, k)
+
+
+Base.isequal(v::AbstractHV, u::AbstractHV) = v.v == u.v
+
+
+"""
+    Base.isapprox(u::AbstractHV, v::AbstractHV, atol=length(u)/100, ptol=0.01)
+
+Measurures when two hypervectors are similar (have more elements in common than expected
+by chance).
+
+One can specify either:
+- `atol=N/100` number of matches more than due to chance needed for being assumed similar
+- `ptol=0.01` threshold for seeing that many matches due to chance
+"""
+function Base.isapprox(u::T, v::T; atol=length(u)/100, ptol=0.01) where T<:Union{BinaryHV,BipolarHV}
+    @assert length(u) == length(v) "Vectors have to be of equal length"
+    N = length(u)
+    missmatches = sum(ui!=vi for (ui, vi) in zip(u, v))
+    matches = N - missmatches
+    # probability of seeing fewer mismatches due to chance
+    pval = cdf(Binomial(N, 0.5), missmatches)
+    return pval < ptol || matches - N/2 > atol
+end
+
+"""
+    Base.isapprox(u::AbstractHV, v::AbstractHV, atol=length(u)/100, ptol=0.01)
+
+Measurures when two hypervectors are similar (have more elements in common than expected
+by chance) using the Hamming distance. Uses a bootstrap to construct a null distribution.
+
+One can specify either:
+- `ptol=1e-10` threshold for seeing that many matches due to chance
+- `N_bootstap=200` number of samples for bootstrapping
+"""
+function Base.isapprox(u::T, v::T; ptol=1e-10, N_bootstrap=500) where T<:AbstractHV
+    @assert length(u) == length(v) "Vectors have to be of equal length"
+    N = length(u)
+    # bootstrap to find the zero distr
+    B = [abs(rand(u) - rand(v)) for _ in 1:N_bootstrap]
+    Bmean = N * mean(B)
+    Bstd = sqrt(N) * std(B)
+    # Hamming distance
+    d = sum(abs(ui-vi) for (ui, vi) in zip(u, v))
+    # probability of seeing fewer mismatches due to chance
+    pval = cdf(Normal(Bmean, Bstd), d)
+    return pval < ptol
+end
