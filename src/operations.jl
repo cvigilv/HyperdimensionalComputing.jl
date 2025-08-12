@@ -11,7 +11,7 @@ operations.jl; This file implements operations that can be done on hypervectors 
 | -------------------- | ------ | --------------------------------------------------------------------------------------------------------------- |
 | Bundling/aggregating | `+`    | combines the information of two vectors into a new vector similar to both                                       |
 | Binding              | `*`    | mapping, combines the two vectors in something different from both, preserves distance, distributes of bundling |
-| Shifting             | `Π`    | Permutation (in practice cyclic shifting), distributes over addition, conserves distance                        |
+| Shifting             | `ρ`    | Permutation (in practice cyclic shifting), distributes over addition, conserves distance                        |
 =#
 
 """

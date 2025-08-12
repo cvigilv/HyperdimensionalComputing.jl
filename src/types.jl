@@ -51,6 +51,7 @@ BipolarHV(v::AbstractVector) = BipolarHV(v.>0)
 
 Base.getindex(hv::BipolarHV, i) = hv.v[i] ? 1 : -1
 Base.sum(hv::BipolarHV) = 2sum(hv.v) - length(hv.v)
+LinearAlgebra.norm(hv::BipolarHV) = sqrt(length(hv))
 
 # needed for aggregation
 empty_vector(hv::BipolarHV) = zeros(Int, length(hv))
