@@ -36,7 +36,7 @@ makedocs(;
         "HyperdimensionalComputing.jl" => "index.md",
         "Examples" => [
 			"Introduction to HDC" => "examples/introduction-to-hdc.md",
-			# "What's the Dollar of Mexico?" => "examples/whats-the-dollar-of-mexico.md"
+			"What's the Dollar of Mexico?" => "examples/whats-the-dollar-of-mexico.md"
 		],
         "API" => "api.md",
     ],
