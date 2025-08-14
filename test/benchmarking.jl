@@ -3,7 +3,7 @@ using HyperdimensionalComputing
 # get the different types
 println("The time to encode a 4-letter alphabet as bipolar or binary hypervectors, respectively:")
 @time bip = encode_alphabet(['A', 'C', 'T', 'G'])
-@time bin = encode_alphabet(['A', 'C', 'T', 'G'], vectortype="binary")
+@time bin = encode_alphabet(['A', 'C', 'T', 'G'], vectortype = "binary")
 println()
 
 # benchmark multiplication
@@ -27,6 +27,6 @@ println()
 # benchmark sequence encoding
 seq = "ATCGATAGCA"
 println("The time to encode a 10-letter sequence as bipolar or binary hypervectors, respectively:")
-@time encode_sequence(seq, bip, k=3)
-@time encode_sequence(seq, bin, k=3)
+@time encode_sequence(seq, bip, k = 3)
+@time encode_sequence(seq, bin, k = 3)
 println()
