@@ -1,8 +1,10 @@
 name: Auto Assign Reviewers
+permissions:
+  contents: read
+  pull-requests: write
 on:
   pull_request:
     types: [opened]
-
 jobs:
   assign-reviewers:
     runs-on: ubuntu-latest
@@ -14,24 +16,20 @@ jobs:
             const author = context.payload.pull_request.user.login;
             const prNumber = context.payload.pull_request.number;
 
-            let reviewers = [];
+            // Skip if PR is from a fork
+            if (context.payload.pull_request.head.repo.full_name !== context.payload.repository.full_name) {
+              core.info('PR is from a fork, skipping reviewer assignment.');
+              return;
+            }
 
-            // Define your mapping
+            let reviewers = [];
             const reviewerMap = {
               'MichielStock': ['cvigilv'],
               'cvigilv': ['MichielStock'],
-              // Default reviewers for other contributors
               'default': ['MichielStock', 'cvigilv']
             };
 
-            // Assign based on author
-            if (reviewerMap[author]) {
-              reviewers = reviewerMap[author];
-            } else {
-              reviewers = reviewerMap['default'];
-            }
-
-            // Remove author from reviewers if present
+            reviewers = reviewerMap[author] || reviewerMap['default'];
             reviewers = reviewers.filter(reviewer => reviewer !== author);
 
             if (reviewers.length > 0) {
