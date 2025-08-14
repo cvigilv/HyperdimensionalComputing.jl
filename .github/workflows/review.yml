@@ -1,0 +1,44 @@
+name: Auto Assign Reviewers
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  assign-reviewers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign reviewers based on author
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const author = context.payload.pull_request.user.login;
+            const prNumber = context.payload.pull_request.number;
+
+            let reviewers = [];
+
+            // Define your mapping
+            const reviewerMap = {
+              'MichielStock': ['cvigilv'],
+              'cvigilv': ['MichielStock'],
+              // Default reviewers for other contributors
+              'default': ['MichielStock', 'cvigilv']
+            };
+
+            // Assign based on author
+            if (reviewerMap[author]) {
+              reviewers = reviewerMap[author];
+            } else {
+              reviewers = reviewerMap['default'];
+            }
+
+            // Remove author from reviewers if present
+            reviewers = reviewers.filter(reviewer => reviewer !== author);
+
+            if (reviewers.length > 0) {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                reviewers: reviewers
+              });
+            }
