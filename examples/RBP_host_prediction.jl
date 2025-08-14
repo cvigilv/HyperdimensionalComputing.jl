@@ -28,15 +28,19 @@ classes = coerce(classes, Multiclass);
 dimension = 10000
 nfolds = 5
 kvalues = LinRange(5, 10, 6)
-encoded_alphabet = encode_items(["A", "G", "I", "L", "P", "V", "F", "W", "Y", "D",
-                                    "E", "R", "H", "K", "S", "T", "C", "M", "N", "Q"],
-                                    dim=dimension)
+encoded_alphabet = encode_items(
+    [
+        "A", "G", "I", "L", "P", "V", "F", "W", "Y", "D",
+        "E", "R", "H", "K", "S", "T", "C", "M", "N", "Q",
+    ],
+    dim = dimension
+)
 
 # kfold over the sequences: use 80% to build the class HVs and 20% to make predictions for
 for kval in kvalues
     predictions = zeros(length(sequences))
     pb = Progress(nfolds)
-    for (train_indices, test_indices) in KFold(length(sequences), n_folds=nfolds)
+    for (train_indices, test_indices) in KFold(length(sequences), n_folds = nfolds)
         # define matrices for hypervectors & labels
         x_train = zeros(length(train_indices), dimension)
         x_test = zeros(length(test_indices), dimension)
@@ -44,10 +48,10 @@ for kval in kvalues
 
         # encode sequences
         for (i, train_index) in enumerate(train_indices)
-            x_train[i,:] = encode_sequence(sequences[train_index], encoded_alphabet, k=Int64.(round(kval, digits=1)))
+            x_train[i, :] = encode_sequence(sequences[train_index], encoded_alphabet, k = Int64.(round(kval, digits = 1)))
         end
         for (i, test_index) in enumerate(test_indices)
-            x_test[i,:] = encode_sequence(sequences[test_index], encoded_alphabet, k=Int64.(round(kval, digits=1)))
+            x_test[i, :] = encode_sequence(sequences[test_index], encoded_alphabet, k = Int64.(round(kval, digits = 1)))
         end
 
         # encode class vectors
@@ -78,10 +82,10 @@ MLJ.confmat(predictions, classes)
 
 re = MLJ.multiclass_recall(predictions, classes)
 pre = MLJ.multiclass_positive_predictive_value(predictions, classes)
-Fm = (2*pre*re)/(pre+re)
+Fm = (2 * pre * re) / (pre + re)
 
 # compute weighted multiclass F1 score
-class_weights = [count(i->(i==x), classes) for x in levels(classes)]
+class_weights = [count(i -> (i == x), classes) for x in levels(classes)]
 total_F1 = 0
 for (i, level) in enumerate(levels(classes))
     # binarize arrays
@@ -91,6 +95,6 @@ for (i, level) in enumerate(levels(classes))
     F1 = MLJ.f1score(binary_predictions, binary_classes)
     println("F1 score for class ", level, " : ", F1)
     # refactor for class weights
-    total_F1 += F1*(class_weights[i]/sum(class_weights))
+    total_F1 += F1 * (class_weights[i] / sum(class_weights))
 end
 println("Weighted average F1 score: ", total_F1) # 80.05%

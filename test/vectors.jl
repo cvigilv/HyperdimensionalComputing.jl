@@ -15,7 +15,7 @@ const n = 10
 
         hdv_offset = BipolarHDV(hdv.v, 2)
         @test hdv_offset.offset == 2
-        @test [hdv[i-2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
+        @test [hdv[i - 2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
         hdv_offset[5] = 0
         @test hdv[3] == 0
     end
@@ -33,7 +33,7 @@ const n = 10
 
         hdv_offset = BinaryHDV(hdv.v, 2)
         @test hdv_offset.offset == 2
-        @test [hdv[i-2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
+        @test [hdv[i - 2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
         hdv_offset[5] = 0
         @test hdv[3] == 0
     end
@@ -51,11 +51,11 @@ const n = 10
         @test sum(hdv) ≈ sum(hdv.v)
         @test eltype(GradedBipolarHDV(Float32, n)) <: Float32
 
-        @test all(-0.4 .≤ GradedBipolarHDV(l=-0.4, u=0.6) .≤ 0.6)
+        @test all(-0.4 .≤ GradedBipolarHDV(l = -0.4, u = 0.6) .≤ 0.6)
 
         hdv_offset = GradedBipolarHDV(hdv.v, 2)
         @test hdv_offset.offset == 2
-        @test [hdv[i-2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
+        @test [hdv[i - 2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
         hdv_offset[5] = 0
         @test hdv[3] == 0
     end
@@ -73,11 +73,11 @@ const n = 10
         @test sum(hdv) ≈ sum(hdv.v)
         @test eltype(GradedHDV(Float32, n)) <: Float32
 
-        @test all(0.4 .≤ GradedHDV(l=0.4, u=0.6) .≤ 0.6)
+        @test all(0.4 .≤ GradedHDV(l = 0.4, u = 0.6) .≤ 0.6)
 
         hdv_offset = GradedHDV(hdv.v, 2)
         @test hdv_offset.offset == 2
-        @test [hdv[i-2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
+        @test [hdv[i - 2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
         hdv_offset[5] = 0
         @test hdv[3] == 0
     end
@@ -90,7 +90,7 @@ const n = 10
         @test length(hdv) == n
         @test eltype(hdv) <: Real
         @test hdv[2] isa Real
-    
+
         @test hdv == RealHDV(hdv.v)
         @test similar(hdv) isa RealHDV
         @test sum(hdv) ≈ sum(hdv.v)
@@ -98,7 +98,7 @@ const n = 10
 
         hdv_offset = RealHDV(hdv.v, 2)
         @test hdv_offset.offset == 2
-        @test [hdv[i-2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
+        @test [hdv[i - 2] for i in 1:5] ≈ [hdv_offset[i] for i in 1:5]
         hdv_offset[5] = 0
         @test hdv[3] == 0
     end
