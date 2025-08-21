@@ -1,13 +1,14 @@
-using LinearAlgebra
+using LinearAlgebra, Random
 
 @testset "operations" begin
 
     hv_types = [BinaryHV, BipolarHV, RealHV, TernaryHV,
                 GradedHV, GradedBipolarHV]
 
-    N = 500
-
     for HV in hv_types
+
+        N = 500
+
         @testset "operations $HV" begin
 
             hv1 = HV(N)
@@ -32,6 +33,18 @@ using LinearAlgebra
                 @test shift(hv1, 3) ≈ circshift(v1, 3)
                 @test shift!(hv2, -8) ≈ circshift(v2, -8)
                 @test ρ(hv1, 2) ≈ circshift(v1, 2)
+            end
+
+            @testset "perturbate $HV" begin
+                @test perturbate(hv1, 10) isa HV
+                @test perturbate(hv2, 0.2) isa HV
+                hvp = perturbate(hv1, [4, 8])
+                @test hvp.v[[1,2,3]] ≈ hv1.v[[1,2,3]]
+
+                m = bitrand(length(hv1))
+                hvp = perturbate(hv2, m)
+                @test hv2.v[m] != hvp.v[m]
+                @test hv2.v[.!m] ≈ hvp.v[.!m]
             end
 
             # currently not yet a good way of evaluating these

@@ -243,6 +243,9 @@ end
 ρ!(hv::AbstractHV, k=1) = shift!(hv, k)
 
 
+# COMPARISON
+# ----------
+
 Base.isequal(v::AbstractHV, u::AbstractHV) = v.v == u.v
 
 
@@ -289,3 +292,50 @@ function Base.isapprox(u::T, v::T; ptol=1e-10, N_bootstrap=500) where T<:Abstrac
     pval = cdf(Normal(Bmean, Bstd), d)
     return pval < ptol
 end
+
+
+# PERTURBATION
+# ------------
+
+function randbv(n::Int, m::Int)
+    v = falses(n)  # empty vector
+    v[1:m] .= true # set first m elements to 1
+    return shuffle!(v)
+end
+
+function randbv(n::Int, p::Number)
+    @assert 0 ≤ p ≤ 1 "p should be a valid probability"
+    return randbv(n, round(Int, p*n))
+end
+
+function randbv(n::Int, I)
+    v = falses(n)
+    v[I] .= true
+    return v
+end
+
+
+function perturbate!(::Type{HVByteVec}, hv::HV, I, dist=eldist(hv)) where {HV<:AbstractHV}
+    hv.v[I] .= rand(dist, length(I))
+    hv
+end
+
+function perturbate!(::Type{HVByteVec}, hv::HV, M::BitVector, dist=eldist(hv)) where {HV<:AbstractHV}
+    hv.v[M] .= rand(dist, sum(M))
+    hv
+end
+
+function perturbate!(::Type{HVByteVec}, hv::HV, p::Number, args...) where {HV<:AbstractHV}
+    perturbate!(hv, randbv(length(hv), p), args...)
+end
+
+function perturbate!(::Type{HVBitVec}, hv::AbstractHV, binargs)
+    n = length(hv)
+    M = randbv(n, binargs)  # turn whatever into a mask
+    hv.v .⊻= M
+    return hv
+end
+
+perturbate!(hv, args...) = perturbate!(vectype(hv), hv, args...)
+
+perturbate(hv::AbstractHV, args...; kwargs...) = perturbate!(copy(hv), args...; kwargs...)
