@@ -444,3 +444,47 @@ function ngrams(vs::AbstractVector{<:AbstractHDV}, n::Int = 3)
     @assert 1 <= n <= length(vs) "`n` must be 1 ≤ n ≤ $m"
     return aggregate([bind([Π(vs[i + j], j - 1) for j in 1:n]) for i in 1:(m - n)])
 end
+
+"""
+    graph(source::T, target::T, directed::Bool = false)
+
+Graph for `source`-`target` pairs. Can be directed or undirected.
+
+# Arguments
+- `source::T`: Source node hypervectors
+- `target::T`: Target node hypervectors
+- `directed::Bool = false`: Whether the graph is directed or not
+
+# Example
+
+# Extended help
+
+This encoding is based on the following mathematical notation:
+
+*Undirected graphs*
+```math
+\\otimes_{i=1}^{m} S_i \\otimes T_i
+```
+
+*Directed graphs*
+```math
+\\otimes_{i=1}^{m} S_i \\otimes \\Pi(T_i)
+```
+
+where `K` and `V` are the key and value hypervector collections, `m` is the size of the
+hypervector collection, `i` is the position of the entry in the collection, and `\\otimes`,
+`\\oplus` and `\\Pi` are the binding, bundling and permutation operations.
+
+# See also
+
+- [`hashtable`](@ref): Hash table encoding, underlying encoding strategy of this encoder.
+
+# References
+
+- [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.graph.html)
+
+"""
+function graph(source::T, target::T; directed::Bool = false) where {T <: AbstractVector{<:AbstractHDV}}
+    @assert length(source) == length(target) "`source` and `target` must be the same length"
+    return hashtable(source, Π.(target, convert(Int, directed)))
+end

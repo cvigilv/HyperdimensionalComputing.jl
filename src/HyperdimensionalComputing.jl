@@ -13,12 +13,13 @@ include("vectors.jl")
 include("operations.jl")
 include("encoding.jl")
 export multiset,
-	multibind,
-	bundlesequence,
-	bindsequence,
-	hashtable,
-	crossproduct,
-	ngrams
+    multibind,
+    bundlesequence,
+    bindsequence,
+    hashtable,
+    crossproduct,
+    ngrams,
+    graph
 include("inference.jl")
 include("learning.jl")
 
