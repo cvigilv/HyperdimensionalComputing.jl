@@ -10,7 +10,7 @@ repo_owner = split(repo_url, "/")[1]
 
 makedocs(;
     modules=[HyperdimensionalComputing],
-    authors="Steff Taelman, Dimi Boeckaerts",
+    authors="Carlos Vigil-Vásquez, Steff Taelman, Dimi Boeckaerts",
     repo="https://github.com/$repo_url/blob/{commit}{path}#{line}",
     sitename="HyperdimensionalComputing.jl",
     format=Documenter.HTML(;
