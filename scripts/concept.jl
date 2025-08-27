@@ -19,9 +19,9 @@ using LinearAlgebra
 
 abstract type AbstractHDV{T} <: AbstractVector{T} end
 
-Base.getindex(hdv::AbstractHDV, i) = hdv.v[(i+hdv.offset)%length(hdv)+1]
+Base.getindex(hdv::AbstractHDV, i) = hdv.v[(i + hdv.offset) % length(hdv) + 1]
 Base.size(hdv::AbstractHDV) = size(hdv.v)
-Base.setindex!(hdv::AbstractHDV, val, i) = (hdv.v[(i+hdv.offset)%length(hdv)+1] = val)
+Base.setindex!(hdv::AbstractHDV, val, i) = (hdv.v[(i + hdv.offset) % length(hdv) + 1] = val)
 normalize!(::AbstractHDV) = nothing  ## vectors have no normalization by default
 
 # The first concrete type is `BipolarHDV`, which stores patterns with values $\{-1, 0, 1\}$.
@@ -31,13 +31,13 @@ normalize!(::AbstractHDV) = nothing  ## vectors have no normalization by default
 mutable struct BipolarHDV <: AbstractHDV{Int}
     v::Vector{Int}
     offset::Int
-    BipolarHDV(v::Vector, offset=0) = new(v, offset)
+    BipolarHDV(v::Vector, offset = 0) = new(v, offset)
 end
 
 # We always provide a constructor with optinal dimensionality (n=10,000 by default) and
 # a method `similar`.
 
-BipolarHDV(n::Int=10_000) = BipolarHDV(rand((-1, 1), n))
+BipolarHDV(n::Int = 10_000) = BipolarHDV(rand((-1, 1), n))
 Base.similar(hdv::BipolarHDV) = BipolarHDV(similar(hdv.v))
 
 normalize!(hdv::BipolarHDV) = (hdv.v .= sign.(hdv.v))
@@ -47,40 +47,40 @@ normalize!(hdv::BipolarHDV) = (hdv.v .= sign.(hdv.v))
 mutable struct BinaryHDV <: AbstractHDV{Bool}
     v::Vector{Bool}
     offset::Int
-    BinaryHDV(v::AbstractVector, offset=0) = new(v, offset)
+    BinaryHDV(v::AbstractVector, offset = 0) = new(v, offset)
 end
 
-BinaryHDV(n::Int=10_000) = BinaryHDV(rand(Bool, n))
+BinaryHDV(n::Int = 10_000) = BinaryHDV(rand(Bool, n))
 Base.similar(hdv::BinaryHDV) = BinaryHDV(similar(hdv.v))
 
 # GradedBipolarHDV are vectors in $[-1, 1]^n$, allowing for graded relations.
 
 
-mutable struct GradedBipolarHDV{T<:Real} <: AbstractHDV{T}
+mutable struct GradedBipolarHDV{T <: Real} <: AbstractHDV{T}
     v::Vector{T}
     offset::Int
-    GradedBipolarHDV(v::AbstractVector, offset=0) = new{eltype(v)}(v, offset)
+    GradedBipolarHDV(v::AbstractVector, offset = 0) = new{eltype(v)}(v, offset)
 end
 
-GradedBipolarHDV(T::Type, n::Int=10_000) = GradedBipolarHDV(2rand(T, n).-1)
-GradedBipolarHDV(n::Int=10_000) = GradedBipolarHDV(Float32, n)
+GradedBipolarHDV(T::Type, n::Int = 10_000) = GradedBipolarHDV(2rand(T, n) .- 1)
+GradedBipolarHDV(n::Int = 10_000) = GradedBipolarHDV(Float32, n)
 
 Base.similar(hdv::GradedBipolarHDV) = GradedBipolarHDV(similar(hdv.v))
 
-normalize!(hdv::GradedBipolarHDV)= (hdv.v .= camp.(hdv.v, -1, 1))
+normalize!(hdv::GradedBipolarHDV) = (hdv.v .= camp.(hdv.v, -1, 1))
 
 # Finally, `RealHDV` contain real values, drawn from a standard normal distribution
 # by default.
 
-mutable struct RealHDV{T<:Real} <: AbstractHDV{T}
+mutable struct RealHDV{T <: Real} <: AbstractHDV{T}
     v::Vector{T}
     offset::Int
-    RealHDV(v::Vector{T}, offset=0) where {T} = new{T}(v, offset)
+    RealHDV(v::Vector{T}, offset = 0) where {T} = new{T}(v, offset)
 end
 
-RealHDV(n::Int=10_000) = RealHDV(randn(n), 1.0)
+RealHDV(n::Int = 10_000) = RealHDV(randn(n), 1.0)
 
-normalize!(hdv::RealHDV) = (hdv.v .*=  √(length(hdv) / sum(abs2, hdv.v)))
+normalize!(hdv::RealHDV) = (hdv.v .*= √(length(hdv) / sum(abs2, hdv.v)))
 
 Base.similar(hdv::RealHDV) = RealHDV(similar(hdv.v))
 
@@ -113,12 +113,12 @@ aggr!(r::BinaryHDV, hdv1::BinaryHDV, hdv2::BinaryHDV) = (r .= hdv1 .& hdv2)  ## 
 
 
 function aggr!(r::RealHDV, hdv1::RealHDV, hdv2::RealHDV)
-    r .=  hdv1 .+ hdv2
+    r .= hdv1 .+ hdv2
     r.norm = hdv1.norm + hdv2.norm
     return r
 end
 
-aggr!(r::GradedBipolarHDV, x::GradedBipolarHDV, y::GradedBipolarHDV) = (@. r = x * y / (x * y) + (1-x) * (1-y))
+aggr!(r::GradedBipolarHDV, x::GradedBipolarHDV, y::GradedBipolarHDV) = (@. r = x * y / (x * y) + (1 - x) * (1 - y))
 
 #= 
 
@@ -158,6 +158,6 @@ To perform inference, one has to compute (dis)similarity between vectors.
 =#
 
 
-cos_sim(x::HDV, y::HDV) where {HDV<:AbstractHDV} = (x ⋅ y) / (norm(x.v) * norm(x.v))
+cos_sim(x::HDV, y::HDV) where {HDV <: AbstractHDV} = (x ⋅ y) / (norm(x.v) * norm(x.v))
 
-jaccard(x::HDV, y::HDV) where {HDV<:BinaryHDV} = sum(xᵢ & yᵢ for (xᵢ, yᵢ) in zip(x, y)) / sum(xᵢ | yᵢ for (xᵢ, yᵢ) in zip(x, y))
+jaccard(x::HDV, y::HDV) where {HDV <: BinaryHDV} = sum(xᵢ & yᵢ for (xᵢ, yᵢ) in zip(x, y)) / sum(xᵢ | yᵢ for (xᵢ, yᵢ) in zip(x, y))
