@@ -3,7 +3,7 @@
 
     hdvs = [GradedHDV(10) for i in 1:5]
     alphabet = "STOCK"
-    basis = Dict(zip(alphabet,hdvs))
+    basis = Dict(zip(alphabet, hdvs))
 
     @testset "NGrams" begin
 
@@ -12,7 +12,7 @@
 
         @test fourgrams.d[2][1][4][3] ≈ Π(hdvs[2], 0) * Π(hdvs[1], 1) * Π(hdvs[4], 2) * Π(hdvs[3], 3)
         @test fourgrams.d[2][1][4][3] ≈ fourgrams_chars.d['T']['S']['C']['O']
-    end 
+    end
 
     @testset "sequence embedding" begin
         sequence = [2, 3, 5, 1, 3, 4]

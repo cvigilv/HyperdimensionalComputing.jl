@@ -3,10 +3,10 @@
 using HyperdimensionalComputing
 using LinearAlgebra #hide
 
-HyperdimensionalComputing.similarity(u::T,v::T) where T<:BipolarHDV = dot(u, v) / (norm(u) * norm(v)) #hide
-HyperdimensionalComputing.isapprox(u::T, v::T) where T<:BipolarHDV = similarity(u, v) > 3/sqrt(length(v)) #hide
+HyperdimensionalComputing.similarity(u::T, v::T) where {T <: BipolarHDV} = dot(u, v) / (norm(u) * norm(v)) #hide
+HyperdimensionalComputing.isapprox(u::T, v::T) where {T <: BipolarHDV} = similarity(u, v) > 3 / sqrt(length(v)) #hide
 HyperdimensionalComputing.hash(u::AbstractHDV) = hash(u.v, hash(typeof(v)))
-HyperdimensionalComputing.isequal(u::T, v::T) where T<:AbstractHDV = hash(u) == hash(v)
+HyperdimensionalComputing.isequal(u::T, v::T) where {T <: AbstractHDV} = hash(u) == hash(v)
 
 # Concept hypervectors
 
@@ -26,7 +26,7 @@ DOL = BipolarHDV()
 PES = BipolarHDV()
 
 USTATES = (COUNTRY * USA) + (CAPITAL * WDC) + (MONEY * DOL)
-MEXICO  = (COUNTRY * MEX) + (CAPITAL * MXC) + (MONEY * PES)
+MEXICO = (COUNTRY * MEX) + (CAPITAL * MXC) + (MONEY * PES)
 
 #
 

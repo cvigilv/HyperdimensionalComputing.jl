@@ -14,7 +14,7 @@ using Handcalcs #hide
 
 using HyperdimensionalComputing
 
-ρ(hv::AbstractHDV, n::Int=1) = Π(hv,n) #hide
+ρ(hv::AbstractHDV, n::Int = 1) = Π(hv, n) #hide
 
 # # Creating hypervectors
 #
@@ -30,7 +30,7 @@ BipolarHDV(8)
 
 # Alternatively, one can create a hypervector directly from a `AbstractVector`:
 
-BipolarHDV(rand([-1,1], 8))
+BipolarHDV(rand([-1, 1], 8))
 
 # Let's create 3 bipolar hypervector to use for the tutorial:
 
@@ -188,7 +188,7 @@ animals = [dog_hv, cat_hv, cow_hv]
 
 bark_hv = BipolarHDV()
 meow_hv = BipolarHDV()
-moo_hv  = BipolarHDV()
+moo_hv = BipolarHDV()
 sounds = [bark_hv, meow_hv, moo_hv]
 
 
@@ -219,14 +219,14 @@ char2hv[' '] = BipolarHDV()
 # Encode the phrases using 3-grams
 
 phrases = [
-	"the quick brown fox jumps over the lazy dog",
-	"the slick grown box bumps under the hazy fog",
-	"the thick known cox dumps inter the crazy cog",
-	"the brick shown pox lumps enter the glazy jog",
-	"the stick blown sox pumps winter the blazy log"
+    "the quick brown fox jumps over the lazy dog",
+    "the slick grown box bumps under the hazy fog",
+    "the thick known cox dumps inter the crazy cog",
+    "the brick shown pox lumps enter the glazy jog",
+    "the stick blown sox pumps winter the blazy log",
 ]
 
-ngrams(p, d) = aggregate([d[p[i]] + Π(d[p[i+1]], 1) + Π(d[p[i+2]], 2) for i in 1:length(p)-2])
+ngrams(p, d) = aggregate([d[p[i]] + Π(d[p[i + 1]], 1) + Π(d[p[i + 2]], 2) for i in 1:(length(p) - 2)])
 
 phrases_hvs = [ngrams(p, char2hv) for p in phrases]
 

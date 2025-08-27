@@ -1,8 +1,8 @@
 ```@meta
-EditURL = "introduction-to-hdc_v2.jl"
+EditURL = "introduction-to-hdc.jl"
 ```
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 using Handcalcs #hide
 ````
 
@@ -18,7 +18,7 @@ for robust, fault-tolerant computation.
 
 Let's start by loading the package in question, as follows:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 using HyperdimensionalComputing
 
 ρ(hv::AbstractHDV, n::Int=1) = Π(hv,n) #hide
@@ -28,7 +28,7 @@ using HyperdimensionalComputing
 
 First, we will create a random bipolar hypervector. This is done as follows:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 BipolarHDV()
 ````
 
@@ -36,19 +36,19 @@ As you may see, by default the hypervector created has 10.000 dimensions. This i
 value in `HyperdimensionalComputing.jl`, but one can can create a hypervector of any given
 dimensionality by providing the size of this as an argument:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 BipolarHDV(8)
 ````
 
 Alternatively, one can create a hypervector directly from a `AbstractVector`:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 BipolarHDV(rand([-1,1], 8))
 ````
 
 Let's create 3 bipolar hypervector to use for the tutorial:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 h₁ = BipolarHDV(8)
 h₂ = BipolarHDV(8)
 h₃ = BipolarHDV(8);
@@ -92,13 +92,13 @@ $$\text{sign}(i) = \begin{cases}
 
 In HyperdimensionalComputing.jl, you can bundle hypervectors as follows:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 aggregate([h₁, h₂, h₃])
 ````
 
 alternatively, you can use the `+` operator (which if overloaded for all `AbstractHDV`):
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 h₁ + h₂ + h₃
 ````
 
@@ -121,13 +121,13 @@ where $[...]$ represents a normalization procedure.
 
 In HyperdimensionalComputing.jl, you can bind hypervectors as follows:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 bind([h₁, h₂, h₃])
 ````
 
 alternatively, you can use the `*` operator (which if overloaded for all `AbstractHDV`):
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 h₁ * h₂ * h₃
 ````
 
@@ -146,15 +146,15 @@ positions.
 
 $$m = \rho(h₁)$$
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 @handcalcs h₁ # hide
 ````
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 @handcalcs ρ(h₁) # hide
 ````
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 @handcalcs h₁ != ρ(h₁) # hide
 ````
 
@@ -166,11 +166,11 @@ where $\nsim$ means that the hypervectors are dissimilar, i.e. they are quasi-or
 
 In `HyperdimensionalComputing.jl`, one can shift hypervector as follows:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 ρ(h₁, 1)
 ````
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 h₁ != ρ(h₁, 1) != ρ(h₁, 2) != ρ(h₁, 3)
 ````
 
@@ -182,19 +182,19 @@ provides a handy `similarity` function that accepts:
 
 2 hypervectors:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 similarity(h₁, h₂)
 ````
 
 A vector of hypervectors:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 similarity(h₁, h₁)
 ````
 
 or a hypervector and a vector of hypervectors:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 similarity.(Ref(h₁), [h₁, h₂, h₃])
 ````
 
@@ -211,7 +211,7 @@ explore some fundamental encoding strategies that demonstrate this flexibility.
 
 Animal hypervectors:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 dog_hv = BipolarHDV()
 cat_hv = BipolarHDV()
 cow_hv = BipolarHDV()
@@ -220,7 +220,7 @@ animals = [dog_hv, cat_hv, cow_hv]
 
 Sound hypervectors:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 bark_hv = BipolarHDV()
 meow_hv = BipolarHDV()
 moo_hv  = BipolarHDV()
@@ -229,20 +229,20 @@ sounds = [bark_hv, meow_hv, moo_hv]
 
 Associative memory:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 memory = (dog_hv * bark_hv) + (cat_hv * meow_hv) + (cow_hv * moo_hv);
 nothing #hide
 ````
 
 Querying memory to search for dog's sound:
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 findmax(hv -> similarity(memory * dog_hv, hv), sounds)
 ````
 
 Querying memory to search which animals goes "moo":
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 findmax(hv -> similarity(memory * moo_hv, hv), animals)
 ````
 
@@ -255,14 +255,14 @@ having more animal that, for example, share sounds.
 
 Generate hypervectors for all characters in the alphabet
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 char2hv = Dict(c => BipolarHDV() for c in 'a':'z')
 char2hv[' '] = BipolarHDV()
 ````
 
 Encode the phrases using 3-grams
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 phrases = [
 	"the quick brown fox jumps over the lazy dog",
 	"the slick grown box bumps under the hazy fog",
@@ -278,7 +278,7 @@ phrases_hvs = [ngrams(p, char2hv) for p in phrases]
 
 Search for "crazy" in phrases
 
-````@example introduction-to-hdc_v2
+````@example introduction-to-hdc
 query = ngrams("crazy", char2hv)
 findmax(h -> similarity(query, h), phrases_hvs)
 ````
