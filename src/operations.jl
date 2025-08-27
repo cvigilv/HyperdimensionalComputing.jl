@@ -151,7 +151,7 @@ end
 # SHIFTING
 # --------
 
-function Base.circshift!(hdv::AbstractHDV, k)
+function Base.circshift!(hdv::AbstractHDV, k::Integer)
     hdv.offset += k
     return hdv
 end
@@ -164,8 +164,8 @@ for hdvt in [:BipolarHDV, :BinaryHDV, :GradedBipolarHDV, :GradedHDV, :RealHDV]
     )
 end
 
-Π(hdv::AbstractHDV, k) = circshift(hdv, k)
-Π!(hdv::AbstractHDV, k) = circshift!(hdv, k)
+Π(hdv::AbstractHDV, k::Integer) = circshift(hdv, k)
+Π!(hdv::AbstractHDV, k::Integer) = circshift!(hdv, k)
 
 function resetoffset!(hdv::AbstractHDV)
     hdv.offset == 0 && return hdv
