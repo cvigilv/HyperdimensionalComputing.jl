@@ -14,39 +14,37 @@ using Handcalcs #hide
 
 using HyperdimensionalComputing
 
-ρ(hv::AbstractHDV, n::Int = 1) = Π(hv, n) #hide
-
 # # Creating hypervectors
 #
 # First, we will create a random bipolar hypervector. This is done as follows:
 
-BipolarHDV()
+BipolarHV()
 
 # As you may see, by default the hypervector created has 10.000 dimensions. This is the default
 # value in `HyperdimensionalComputing.jl`, but one can can create a hypervector of any given
 # dimensionality by providing the size of this as an argument:
 
-BipolarHDV(8)
+BipolarHV(8)
 
 # Alternatively, one can create a hypervector directly from a `AbstractVector`:
 
-BipolarHDV(rand([-1, 1], 8))
+BipolarHV(rand([-1, 1], 8))
 
 # Let's create 3 bipolar hypervector to use for the tutorial:
 
-h₁ = BipolarHDV(8)
-h₂ = BipolarHDV(8)
-h₃ = BipolarHDV(8);
+h₁ = BipolarHV(8)
+h₂ = BipolarHV(8)
+h₃ = BipolarHV(8);
 
 
-# The package has different hypervector types, such as `BipolarHDV`, `TernaryHDV`, `RealHDV`,
-# `GradedBipolarHDV`, and `GradedHDV`. All of this hypervectors have a common abstract type
-# `AbstractHDV` which can be used to build additional functions or encoding strategies (more on
+# The package has different hypervector types, such as `BipolarHV`, `TernaryHV`, `RealHV`,
+# `GradedBipolarHV`, and `GradedHV`. All of this hypervectors have a common abstract type
+# `AbstractHV` which can be used to build additional functions or encoding strategies (more on
 # both later).
 #
 # !!! info "On (abstract) types"
 #     All hypervectors implemented on `HyperdimensionalComputing.jl` can be found by checking the
-#     docstrings for the `AbstractHDV` (by typing `?AbstractHDV` on the Julia REPL).
+#     docstrings for the `AbstractHV` (by typing `?AbstractHV` on the Julia REPL).
 #
 #     For more information on a specific hypervector type, the docstrings contain information on
 #     the implementation, operations, similarity measurement and other technical
@@ -76,9 +74,9 @@ h₃ = BipolarHDV(8);
 #
 # In HyperdimensionalComputing.jl, you can bundle hypervectors as follows:
 
-aggregate([h₁, h₂, h₃])
+bundle([h₁, h₂, h₃])
 
-# alternatively, you can use the `+` operator (which if overloaded for all `AbstractHDV`):
+# alternatively, you can use the `+` operator (which if overloaded for all `AbstractHV`):
 
 h₁ + h₂ + h₃
 
@@ -101,9 +99,9 @@ h₁ + h₂ + h₃
 #
 # In HyperdimensionalComputing.jl, you can bind hypervectors as follows:
 
-bind([h₁, h₂, h₃])
+# bind([h₁, h₂, h₃])
 
-# alternatively, you can use the `*` operator (which if overloaded for all `AbstractHDV`):
+# alternatively, you can use the `*` operator (which if overloaded for all `AbstractHV`):
 
 h₁ * h₂ * h₃
 
@@ -179,16 +177,16 @@ similarity.(Ref(h₁), [h₁, h₂, h₃])
 #
 # Animal hypervectors:
 
-dog_hv = BipolarHDV()
-cat_hv = BipolarHDV()
-cow_hv = BipolarHDV()
+dog_hv = BipolarHV()
+cat_hv = BipolarHV()
+cow_hv = BipolarHV()
 animals = [dog_hv, cat_hv, cow_hv]
 
 # Sound hypervectors:
 
-bark_hv = BipolarHDV()
-meow_hv = BipolarHDV()
-moo_hv = BipolarHDV()
+bark_hv = BipolarHV()
+meow_hv = BipolarHV()
+moo_hv = BipolarHV()
 sounds = [bark_hv, meow_hv, moo_hv]
 
 
@@ -213,8 +211,8 @@ findmax(hv -> similarity(memory * moo_hv, hv), animals)
 #
 # Generate hypervectors for all characters in the alphabet
 
-char2hv = Dict(c => BipolarHDV() for c in 'a':'z')
-char2hv[' '] = BipolarHDV()
+char2hv = Dict(c => BipolarHV() for c in 'a':'z')
+char2hv[' '] = BipolarHV()
 
 # Encode the phrases using 3-grams
 
@@ -226,7 +224,7 @@ phrases = [
     "the stick blown sox pumps winter the blazy log",
 ]
 
-ngrams(p, d) = aggregate([d[p[i]] + Π(d[p[i + 1]], 1) + Π(d[p[i + 2]], 2) for i in 1:(length(p) - 2)])
+ngrams(p, d) = bundle([d[p[i]] + shift(d[p[i + 1]], 1) + shift(d[p[i + 2]], 2) for i in 1:(length(p) - 2)])
 
 phrases_hvs = [ngrams(p, char2hv) for p in phrases]
 
