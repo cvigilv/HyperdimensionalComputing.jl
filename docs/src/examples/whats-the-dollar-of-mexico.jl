@@ -3,27 +3,22 @@
 using HyperdimensionalComputing
 using LinearAlgebra #hide
 
-HyperdimensionalComputing.similarity(u::T, v::T) where {T <: BipolarHDV} = dot(u, v) / (norm(u) * norm(v)) #hide
-HyperdimensionalComputing.isapprox(u::T, v::T) where {T <: BipolarHDV} = similarity(u, v) > 3 / sqrt(length(v)) #hide
-HyperdimensionalComputing.hash(u::AbstractHDV) = hash(u.v, hash(typeof(v)))
-HyperdimensionalComputing.isequal(u::T, v::T) where {T <: AbstractHDV} = hash(u) == hash(v)
-
 # Concept hypervectors
 
-COUNTRY = BipolarHDV()
-CAPITAL = BipolarHDV()
-MONEY = BipolarHDV()
+COUNTRY = BipolarHV()
+CAPITAL = BipolarHV()
+MONEY = BipolarHV()
 
 # Holistic representation of countries
 
-USA = BipolarHDV()
-MEX = BipolarHDV()
+USA = BipolarHV()
+MEX = BipolarHV()
 
-WDC = BipolarHDV()
-MXC = BipolarHDV()
+WDC = BipolarHV()
+MXC = BipolarHV()
 
-DOL = BipolarHDV()
-PES = BipolarHDV()
+DOL = BipolarHV()
+PES = BipolarHV()
 
 USTATES = (COUNTRY * USA) + (CAPITAL * WDC) + (MONEY * DOL)
 MEXICO = (COUNTRY * MEX) + (CAPITAL * MXC) + (MONEY * PES)
@@ -43,9 +38,9 @@ DOL * F_UM ≈ PES
 
 #
 
-SWE = BipolarHDV()
-STO = BipolarHDV()
-KRO = BipolarHDV()
+SWE = BipolarHV()
+STO = BipolarHV()
+KRO = BipolarHV()
 
 SWEDEN = (COUNTRY * SWE) + (CAPITAL * STO) + (MONEY * KRO)
 
