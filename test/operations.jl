@@ -3,7 +3,7 @@ using LinearAlgebra, Random
 @testset "operations" begin
 
     hv_types = [BinaryHV, BipolarHV, RealHV, TernaryHV,
-                GradedHV, GradedBipolarHV]
+        GradedHV, GradedBipolarHV]
 
     for HV in hv_types
 
@@ -17,10 +17,10 @@ using LinearAlgebra, Random
             v1 = collect(hv1)
             v2 = collect(hv2)
 
-            @testset "aggregate $HV" begin
-                @test aggregate((hv1, hv2)) isa HV
-                @test aggregate([hv1, hv2]) isa HV
-                @test aggregate((HV(N) for i in 1:5)) isa HV
+            @testset "bundle $HV" begin
+                @test bundle((hv1, hv2)) isa HV
+                @test bundle([hv1, hv2]) isa HV
+                @test bundle((HV(N) for i in 1:5)) isa HV
                 @test hv1 + hv2 isa HV
             end
 
@@ -39,7 +39,7 @@ using LinearAlgebra, Random
                 @test perturbate(hv1, 10) isa HV
                 @test perturbate(hv2, 0.2) isa HV
                 hvp = perturbate(hv1, [4, 8])
-                @test hvp.v[[1,2,3]] ≈ hv1.v[[1,2,3]]
+                @test hvp.v[[1, 2, 3]] ≈ hv1.v[[1, 2, 3]]
 
                 m = bitrand(length(hv1))
                 hvp = perturbate(hv2, m)
@@ -53,7 +53,7 @@ using LinearAlgebra, Random
             @testset "similarity $HV" begin
                 N = 10_000
                 hv1 = HV(N)
-                hv2 = HV(N) 
+                hv2 = HV(N)
                 hv3 = HV(N) + hv1  # similar to 1 but not to 2
                 normalize!(hv3)
 
@@ -63,7 +63,7 @@ using LinearAlgebra, Random
                 @test (hv3 ≈ hv1)
                 @test !(hv3 ≈ hv2)
             end
-            
+
         end
 
     end

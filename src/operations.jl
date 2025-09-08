@@ -4,7 +4,6 @@ operations.jl; This file implements operations that can be done on hypervectors 
 
 # Remark: use element-wise reduce, maybe using LazyArrays?
 
-
 #=
 
 | Operation            | symbol | remark                                                                                                          |
@@ -29,8 +28,8 @@ Maps a bipolar number in [-1, 1] to the [0, 1] interval.
 """
 bipol2grad(x::Real) = (x + one(x)) / 2
 
-three_pi(x, y) = abs(x-y)==1 ? zero(x) : x * y / (x * y + (one(x) - x) * (one(y) - y))
-fuzzy_xor(x, y) = (one(x)-x) * y + x * (one(y)-y)
+three_pi(x, y) = abs(x - y) == 1 ? zero(x) : x * y / (x * y + (one(x) - x) * (one(y) - y))
+fuzzy_xor(x, y) = (one(x) - x) * y + x * (one(y) - y)
 
 three_pi_bipol(x, y) = grad2bipol(three_pi(bipol2grad(x), bipol2grad(y)))
 fuzzy_xor_bipol(x, y) = grad2bipol(fuzzy_xor(bipol2grad(x), bipol2grad(y)))  # currently just *
@@ -49,7 +48,7 @@ neutralbind(hdv::BinaryHV) = false
 neutralbind(hdv::GradedHV) = zero(eltype(hdv))
 neutralbind(hdv::GradedBipolarHV) = -one(eltype(hdv))
 
-noisy_and(a,b) = a==b ? a : rand(Bool)
+noisy_and(a, b) = a == b ? a : rand(Bool)
 
 function elementreduce!(f, itr, init)
     return foldl(itr; init) do acc, value
@@ -62,7 +61,7 @@ end
 @inline function offsetcombine!(r, f, x, y, offset=0)
     @assert length(r) == length(x) == length(y)
     n = length(r)
-    if offset==0
+    if offset == 0
         r .= f.(x, y)
     else
         i′ = n - offset
@@ -78,7 +77,7 @@ end
     @assert length(x) == length(y)
     r = similar(x)
     n = length(r)
-    if offset==0
+    if offset == 0
         r .= f.(x, y)
     else
         i′ = n - offset
@@ -94,7 +93,7 @@ end
 # -----------
 
 # binary and bipolar: use majority
-function aggregate(hvr::Union{BinaryHV,BipolarHV}, hdvs, r)
+function bundle(hvr::Union{BinaryHV,BipolarHV}, hdvs, r)
     m = length(hdvs)
     for hv in hdvs
         r .+= hv.v
@@ -103,13 +102,13 @@ function aggregate(hvr::Union{BinaryHV,BipolarHV}, hdvs, r)
         r .+= bitrand(length(r))
     end
     hvr = similar(hvr)
-    hvr.v .= r.>m/2
+    hvr.v .= r .> m / 2
     return hvr
 end
-   
+
 # ternary: just add them, no normalization by default
-function aggregate(::TernaryHV, hdvs, r;
-            normalize=false)
+function bundle(::TernaryHV, hdvs, r;
+    normalize=false)
     for hv in hdvs
         r .+= hv.v
     end
@@ -118,7 +117,7 @@ function aggregate(::TernaryHV, hdvs, r;
 end
 
 # realhv: just add + rescale with sqrt m
-function aggregate(::RealHV, hdvs, r)
+function bundle(::RealHV, hdvs, r)
     m = 0
     for hv in hdvs
         r .+= hv.v
@@ -128,63 +127,27 @@ function aggregate(::RealHV, hdvs, r)
     return RealHV(r)
 end
 
-function aggregate(::GradedHV, hdvs, r)
+function bundle(::GradedHV, hdvs, r)
     for hv in hdvs
         r .= three_pi.(r, hv.v)
     end
     return GradedHV(r)
 end
 
-function aggregate(::GradedBipolarHV, hdvs, r)
+function bundle(::GradedBipolarHV, hdvs, r)
     for hv in hdvs
         r .= three_pi_bipol.(r, hv.v)
     end
     return GradedBipolarHV(r)
 end
 
-function aggregate(hdvs; kwargs...)
+function bundle(hdvs; kwargs...)
     hv = first(hdvs)
     r = empty_vector(hv)
-    return aggregate(hv, hdvs, r, kwargs...)
+    return bundle(hv, hdvs, r, kwargs...)
 end
 
-Base.:+(hv1::HV, hv2::HV) where {HV<:AbstractHV} = aggregate((hv1, hv2))
-
-#=
-aggregate(hdvs::AbstractVector{<:AbstractHDV}, args...; kwargs...) = aggregate!(similar(first(hdvs)), hdvs, args...; kwargs...)
-aggregate(hdvs::NTuple{N,T}, args...; kwargs...) where {N,T<:AbstractHDV} = aggregate!(similar(first(hdvs)), hdvs, args...; kwargs...)
-
-Base.:+(hdv1::HDV, hdv2::HDV) where {HDV<:AbstractHDV} = aggregate!(similar(hdv1), (hdv1, hdv2))
-
-clearhdv!(r::AbstractHDV) = fill!(r.v, zero(eltype(r)))
-clearhdv!(r::GradedHDV) = fill!(r.v, one(eltype(r))/2)
-
-function aggregate!(r::AbstractHDV, hdvs; clear=true, norm=false)
-    clear && clearhdv!(r)
-    aggr = aggfun(r)
-    foldl(hdvs, init=r.v) do acc, value
-        offsetcombine!(acc, aggr, acc, value.v, value.offset)
-    end
-    norm && normalize!(r)
-    return r
-end
-
-function aggregate!(r::AbstractHDV, hdvs, weights; clear=true, norm=false)
-    @assert length(hdvs) == length(weights) "You have to provide the same number of weights as vectors."
-    clear && clearhdv!(r)
-    aggr = aggfun(r)
-    foldl(zip(hdvs, weights), init=r.v) do acc, (value, weight)
-        offsetcombine!(acc, aggr, acc, weight .* value.v, value.offset)
-    end
-    for (hdv, weight) in zip(hdvs, weights)
-        r.m += weight * hdv.m
-    end
-    norm && normalize!(r)
-    return r
-end
-
-aggregatewith!(r::AbstractHDV, hdvs; kwargs...) = aggregate!(r, hdvs; clear=false, kwargs...)
-=#
+Base.:+(hv1::HV, hv2::HV) where {HV<:AbstractHV} = bundle((hv1, hv2))
 
 # BINDING
 # -------
@@ -198,24 +161,6 @@ Base.bind(hv1::GradedBipolarHV, hv2::GradedBipolarHV) = GradedBipolarHV(fuzzy_xo
 
 Base.:*(hv1::HV, hv2::HV) where {HV<:AbstractHV} = bind(hv1, hv2)
 
-#=
-Base.bind(hdvs::AbstractVector{<:AbstractHDV}) = bind!(similar(first(hdvs)), hdvs)
-Base.bind(hdvs::NTuple{N,T}) where {N,T<:AbstractHDV} = bind!(similar(first(hdvs)), hdvs)
-
-Base.:*(hdv1::HDV, hdv2::HDV) where {HDV<:AbstractHDV} = bind!(similar(hdv1), (hdv1, hdv2))
-
-function bind!(r::AbstractHDV, hdvs)
-    fill!(r.v, neutralbind(r))
-    r.m = 1  # fresh vector
-    # extract the normalizer
-    nr = normalizer(r)
-    binder = (x, y) -> bindfun(r)(nr(x), nr(y))
-    foldl(hdvs, init=r.v) do acc, value
-        offsetcombine!(acc, binder, acc, value.v, value.offset)
-    end
-    return r
-end
-=#
 
 # SHIFTING
 # --------
@@ -224,7 +169,7 @@ shift!(hv::AbstractHV, k=1) = circshift!(hv.v, k)
 
 function shift(hv::AbstractHV, k=1)
     r = similar(hv)
-    r.v .=  circshift(hv.v, k)
+    r.v .= circshift(hv.v, k)
     return r
 end
 
@@ -259,14 +204,14 @@ One can specify either:
 - `atol=N/100` number of matches more than due to chance needed for being assumed similar
 - `ptol=0.01` threshold for seeing that many matches due to chance
 """
-function Base.isapprox(u::T, v::T; atol=length(u)/100, ptol=0.01) where T<:Union{BinaryHV,BipolarHV}
+function Base.isapprox(u::T, v::T; atol=length(u) / 100, ptol=0.01) where T<:Union{BinaryHV,BipolarHV}
     @assert length(u) == length(v) "Vectors have to be of equal length"
     N = length(u)
-    missmatches = sum(ui!=vi for (ui, vi) in zip(u, v))
+    missmatches = sum(ui != vi for (ui, vi) in zip(u, v))
     matches = N - missmatches
     # probability of seeing fewer mismatches due to chance
     pval = cdf(Binomial(N, 0.5), missmatches)
-    return pval < ptol || matches - N/2 > atol
+    return pval < ptol || matches - N / 2 > atol
 end
 
 """
@@ -287,7 +232,7 @@ function Base.isapprox(u::T, v::T; ptol=1e-10, N_bootstrap=500) where T<:Abstrac
     Bmean = N * mean(B)
     Bstd = sqrt(N) * std(B)
     # Hamming distance
-    d = sum(abs(ui-vi) for (ui, vi) in zip(u, v))
+    d = sum(abs(ui - vi) for (ui, vi) in zip(u, v))
     # probability of seeing fewer mismatches due to chance
     pval = cdf(Normal(Bmean, Bstd), d)
     return pval < ptol
@@ -305,7 +250,7 @@ end
 
 function randbv(n::Int, p::Number)
     @assert 0 ≤ p ≤ 1 "p should be a valid probability"
-    return randbv(n, round(Int, p*n))
+    return randbv(n, round(Int, p * n))
 end
 
 function randbv(n::Int, I)

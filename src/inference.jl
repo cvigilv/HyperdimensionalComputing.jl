@@ -10,9 +10,9 @@ LinearAlgebra.dot(u::BipolarHV, v::BipolarHV) = 4dot(u.v, v.v) - 2sum(u.v) - 2su
 
 sim_cos(u::AbstractVector, v::AbstractVector) = dot(u, v) / (norm(u) * norm(v))
 
-sim_jacc(u::AbstractVector, v::AbstractVector) = dot(u, v) / sum(ui+vi-ui*vi for (ui, vi) in zip(u, v))
+sim_jacc(u::AbstractVector, v::AbstractVector) = dot(u, v) / sum(ui + vi - ui * vi for (ui, vi) in zip(u, v))
 
-dist_hamming(u::AbstractVector, v::AbstractVector) = sum(abs(ui-vi) for (ui, vi) in zip(u, v))
+dist_hamming(u::AbstractVector, v::AbstractVector) = sum(abs(ui - vi) for (ui, vi) in zip(u, v))
 
 similarity(x::BipolarHV, y::BipolarHV) = sim_cos(x, y)
 similarity(x::TernaryHV, y::TernaryHV) = sim_cos(x, y)
