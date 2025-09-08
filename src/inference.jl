@@ -21,4 +21,3 @@ similarity(x::RealHV, y::RealHV) = sim_cos(x, y)
 
 similarity(x::BinaryHV, y::BinaryHV) = sim_jacc(x, y)
 similarity(x::GradedHV, y::GradedHV) = sim_jacc(x, y)
-

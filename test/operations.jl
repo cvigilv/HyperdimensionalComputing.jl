@@ -2,8 +2,10 @@ using LinearAlgebra, Random
 
 @testset "operations" begin
 
-    hv_types = [BinaryHV, BipolarHV, RealHV, TernaryHV,
-        GradedHV, GradedBipolarHV]
+    hv_types = [
+        BinaryHV, BipolarHV, RealHV, TernaryHV,
+        GradedHV, GradedBipolarHV,
+    ]
 
     for HV in hv_types
 
@@ -48,7 +50,7 @@ using LinearAlgebra, Random
             end
 
             # currently not yet a good way of evaluating these
-            HV <: Union{TernaryHV,GradedHV,GradedBipolarHV,RealHV} && continue
+            HV <: Union{TernaryHV, GradedHV, GradedBipolarHV, RealHV} && continue
 
             @testset "similarity $HV" begin
                 N = 10_000
@@ -63,8 +65,6 @@ using LinearAlgebra, Random
                 @test (hv3 ≈ hv1)
                 @test !(hv3 ≈ hv2)
             end
-
         end
-
     end
 end
