@@ -9,16 +9,16 @@ LinearAlgebra.norm(hdv::AbstractHDV) = norm(hdv.v)
 function LinearAlgebra.dot(x::AbstractHDV, y::AbstractHDV)
     nx = normalizer(x)
     ny = normalizer(y)
-    if x.offset == y.offset  
-        return sum(((vx,vy),)->dot(nx(vx),ny(vy)), zip(x.v, y.v))
+    if x.offset == y.offset
+        return sum(((vx, vy),) -> dot(nx(vx), ny(vy)), zip(x.v, y.v))
     else
-        return sum(((vx,vy),)->dot(nx(vx),ny(vy)), zip(x, y))
+        return sum(((vx, vy),) -> dot(nx(vx), ny(vy)), zip(x, y))
     end
 end
 
 cos_sim(x::AbstractVector, y::AbstractVector) = dot(x, y) / (norm(x) * norm(y))
 
-jacc_sim(x::AbstractVector, y::AbstractVector) = dot(x, y) / sum(t->t[1]+t[2]-t[1]*t[2], zip(x,y))
+jacc_sim(x::AbstractVector, y::AbstractVector) = dot(x, y) / sum(t -> t[1] + t[2] - t[1] * t[2], zip(x, y))
 
 # specific similarities
 # for HDVs that can both be pos and neg,

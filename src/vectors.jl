@@ -15,11 +15,11 @@ abstract type AbstractHDV{T} <: AbstractVector{T} end
 
 # taking the indices takes a long time=> remove!
 
-@inline Base.getindex(hdv::AbstractHDV, i) = @inbounds hdv.v[validindex(i-hdv.offset, length(hdv))] .|> normalizer(hdv)
+@inline Base.getindex(hdv::AbstractHDV, i) = @inbounds hdv.v[validindex(i - hdv.offset, length(hdv))] .|> normalizer(hdv)
 
 Base.size(hdv::AbstractHDV) = size(hdv.v)
 
-@inline Base.setindex!(hdv::AbstractHDV, val, i) = @inbounds (hdv.v[validindex(i-hdv.offset, length(hdv))] = val)
+@inline Base.setindex!(hdv::AbstractHDV, val, i) = @inbounds (hdv.v[validindex(i - hdv.offset, length(hdv))] = val)
 
 Base.Vector(hdv::AbstractHDV) = collect(hdv)
 
@@ -48,14 +48,14 @@ mutable struct BipolarHDV <: AbstractHDV{Int}
     v::Vector{Int}
     offset::Int
     m::Int
-    BipolarHDV(v::Vector, offset=0, m=1) = new(v, offset, m)
+    BipolarHDV(v::Vector, offset = 0, m = 1) = new(v, offset, m)
 end
 
-BipolarHDV(n::Int=10_000) = BipolarHDV(rand((-1, 1), n))
+BipolarHDV(n::Int = 10_000) = BipolarHDV(rand((-1, 1), n))
 
 Base.similar(hdv::BipolarHDV) = BipolarHDV(similar(hdv.v), 0, 0)
 
-normalizer(::BipolarHDV) = vᵢ -> clamp(vᵢ, -1, 1) 
+normalizer(::BipolarHDV) = vᵢ -> clamp(vᵢ, -1, 1)
 
 # `BinaryHDV` contain binary vectors.
 
@@ -63,42 +63,42 @@ mutable struct BinaryHDV <: AbstractHDV{Bool}
     v::Vector{Int}
     offset::Int
     m::Int
-    BinaryHDV(v::AbstractVector, offset=0, m=1) = new(v, offset, m)
+    BinaryHDV(v::AbstractVector, offset = 0, m = 1) = new(v, offset, m)
 end
 
 
-BinaryHDV(n::Int=10_000) = BinaryHDV(rand(0:1, n))
+BinaryHDV(n::Int = 10_000) = BinaryHDV(rand(0:1, n))
 
 Base.similar(hdv::BinaryHDV) = BinaryHDV(similar(hdv.v), 0, 0)
 
-normalizer(hdv::BinaryHDV) = vᵢ -> 2vᵢ > hdv.m 
+normalizer(hdv::BinaryHDV) = vᵢ -> 2vᵢ > hdv.m
 
 
 # GradedBipolarHDV are vectors in $[-1, 1]^n$, allowing for graded relations.
 
-mutable struct GradedBipolarHDV{T<:Real} <: AbstractHDV{T}
+mutable struct GradedBipolarHDV{T <: Real} <: AbstractHDV{T}
     v::Vector{T}
     offset::Int
     m::T
-    GradedBipolarHDV(v::AbstractVector, offset=0, m=1) = new{eltype(v)}(v, offset, m)
+    GradedBipolarHDV(v::AbstractVector, offset = 0, m = 1) = new{eltype(v)}(v, offset, m)
 end
 
-GradedBipolarHDV(T::Type, n::Int=10_000; l=-0.8, u=0.8) = GradedBipolarHDV(randinterval(T, n, l, u))
-GradedBipolarHDV(n::Int=10_00; l=-0.8, u=0.8) = GradedBipolarHDV(Float32, n; l, u)
+GradedBipolarHDV(T::Type, n::Int = 10_000; l = -0.8, u = 0.8) = GradedBipolarHDV(randinterval(T, n, l, u))
+GradedBipolarHDV(n::Int = 10_00; l = -0.8, u = 0.8) = GradedBipolarHDV(Float32, n; l, u)
 
 Base.similar(hdv::GradedBipolarHDV) = GradedBipolarHDV(similar(hdv.v), 0, 0)
 
 #normalizer(hdv::GradedBipolarHDV) = vᵢ -> clamp(vᵢ, -1, 1)
 
-mutable struct GradedHDV{T<:Real} <: AbstractHDV{T}
+mutable struct GradedHDV{T <: Real} <: AbstractHDV{T}
     v::Vector{T}
     offset::Int
     m::Int
-    GradedHDV(v::AbstractVector, offset=0, m=1) = new{eltype(v)}(v, offset, m)
+    GradedHDV(v::AbstractVector, offset = 0, m = 1) = new{eltype(v)}(v, offset, m)
 end
 
-GradedHDV(T::Type, n::Int=10_000; l=0.2, u=0.8) = GradedHDV(randinterval(T, n, l, u))
-GradedHDV(n::Int=10_000; l=0.2, u=0.8) = GradedHDV(Float32, n; l, u)
+GradedHDV(T::Type, n::Int = 10_000; l = 0.2, u = 0.8) = GradedHDV(randinterval(T, n, l, u))
+GradedHDV(n::Int = 10_000; l = 0.2, u = 0.8) = GradedHDV(Float32, n; l, u)
 
 Base.similar(hdv::GradedHDV) = GradedHDV(similar(hdv.v), 0, 0)
 
@@ -108,15 +108,15 @@ Base.similar(hdv::GradedHDV) = GradedHDV(similar(hdv.v), 0, 0)
 # Finally, `RealHDV` contain real values, drawn from a standard normal distribution
 # by default.
 
-mutable struct RealHDV{T<:Real} <: AbstractHDV{T}
+mutable struct RealHDV{T <: Real} <: AbstractHDV{T}
     v::Vector{T}
     offset::Int
     m::Float64
-    RealHDV(v::Vector{T}, offset=0,m=1) where {T} = new{T}(v,offset,m)
+    RealHDV(v::Vector{T}, offset = 0, m = 1) where {T} = new{T}(v, offset, m)
 end
 
-RealHDV(n::Int=10_000) = RealHDV(randn(n))
-RealHDV(T::Type{<:Real}, n::Int=10_000) = RealHDV(T.(randn(n)), 0)
+RealHDV(n::Int = 10_000) = RealHDV(randn(n))
+RealHDV(T::Type{<:Real}, n::Int = 10_000) = RealHDV(T.(randn(n)), 0)
 
 normalizer(hdv::RealHDV) = vᵢ -> vᵢ / sqrt(hdv.m)
 

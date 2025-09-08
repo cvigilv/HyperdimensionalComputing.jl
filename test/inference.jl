@@ -1,5 +1,5 @@
 @testset "inference" begin
-    
+
     @testset "BinaryHDV" begin
         x = BinaryHDV([true, false, true, true])
         y = BinaryHDV([false, false, false, true])
@@ -12,7 +12,7 @@
     end
 
     @testset "GradedHDV" begin
-        x = GradedHDV([0.1, 0.4, 0.6, .8])
+        x = GradedHDV([0.1, 0.4, 0.6, 0.8])
         y = GradedHDV([0.9, 0.8, 0.1, 0.3])
 
         @test similarity(x, y) ≈ jacc_sim(x.v, y.v)
@@ -32,7 +32,7 @@
     end
 
     @testset "GradedBipolarHDV" begin
-        x = GradedBipolarHDV([0.1, -0.4, 0.6, .8])
+        x = GradedBipolarHDV([0.1, -0.4, 0.6, 0.8])
         y = GradedBipolarHDV([0.9, 0.8, -0.1, -0.3])
 
         @test similarity(x, y) ≈ cos_sim(x.v, y.v)
@@ -42,7 +42,7 @@
     end
 
     @testset "RealHDV" begin
-        x = RealHDV([0.1, -0.4, 0.6, .8])
+        x = RealHDV([0.1, -0.4, 0.6, 0.8])
         y = RealHDV([0.9, 0.8, -0.1, -0.3])
 
         @test similarity(x, y) ≈ cos_sim(x.v, y.v)
