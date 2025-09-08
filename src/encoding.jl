@@ -2,6 +2,22 @@
 encoding.jl; This file implements functions to encode token-based data, be it alphabets, strings or full classes of text.
 =#
 
+
+function level_hypervectors(hv::AbstractHV, n_levels, p = 2 / n_levels; method = "random")
+    methods = ["random"]
+    @assert method ∈ methods "`method` has to be one of $methods"
+    hvs = [hv]
+    #TODO: implement alteratives
+    while length(hvs) < n_levels
+        hv = last(hvs)
+        if method == "random"
+            push!(hvs, perturbate(hv, p))
+        end
+    end
+    return hvs
+end
+
+#=
 # SEQUENCE EMBEDDING
 
 # precomputing of the n-grams
@@ -104,5 +120,4 @@ sequence_embedding(sequence, token_vectors::AbstractVector{V}, args...) where {V
 sequence_embedding(sequence, token_vectors::Dict{T, V}, args...) where {T, V <: AbstractHDV} =
     sequence_embedding!(similar(first(token_vectors)[2]), sequence, token_vectors, args...)
 
-sequence_embedding(sequence, ngrams_embedding::NGrams, args...) =
-    sequence_embedding!(similar_vector(ngrams_embedding), sequence, ngrams_embedding, args...)
+=#
