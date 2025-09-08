@@ -249,7 +249,6 @@ end
 Hash table from keys-values hypervector pairs. Keys and values must be the same length in order
 to encode as hypervector.
 
-<<<<<<< HEAD
 # Arguments
 - `keys::AbstractVector{<:AbstractHV}`: Keys hypervectors
 - `values::AbstractVector{<:AbstractHV}`: Values hypervectors
@@ -291,7 +290,7 @@ julia> hashtable(ks, vs)
 This encoding is based on the following mathematical notation:
 
 ```math
-\\otimes_{i=1}^{m} K_i \\otimes V_i
+\\oplus_{i=1}^{m} K_i \\otimes V_i
 ```
 
 where `K` and `V` are the key and value hypervector collections, `m` is the size of the
@@ -304,7 +303,7 @@ and `\\oplus` are the binding and bundling operations.
 """
 function hashtable(keys::T, values::T) where {T <: AbstractVector{<:AbstractHV}}
     @assert length(keys) == length(values) "Number of keys and values aren't equal"
-    return bundle(map(bind, zip(keys, values)))
+    return bundle(map(prod, zip(keys, values)))
 end
 
 """
@@ -372,7 +371,7 @@ and binding operations.
 """
 function crossproduct(U::T, V::T) where {T <: AbstractVector{<:AbstractHV}}
     # TODO: This should be bundled without normalizing
-    return bundle([multiset(U), multiset(V)])
+    return bind(multiset(U), multiset(V))
 end
 
 """
@@ -441,9 +440,10 @@ and shift operations.
 
 """
 function ngrams(vs::AbstractVector{<:AbstractHV}, n::Int = 3)
-    m = length(vs)
-    @assert 1 <= n <= length(vs) "`n` must be 1 ≤ n ≤ $m"
-    return bundle([bind([shift(vs[i + j], j - 1) for j in 1:n]) for i in 1:(m - n)])
+    l = length(vs)
+    p = l - n + 1
+    @assert 1 <= n <= length(vs) "`n` must be 1 ≤ n ≤ $l"
+    return bundle([bind([shift(vs[i + j], j) for j in 0:(n - 1)]) for i in 1:p])
 end
 
 """

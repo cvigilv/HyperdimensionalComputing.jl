@@ -1,58 +1,52 @@
 @testset "encoding" begin
+    hvs = BinaryHV.(
+        [
+            [1, 0, 0, 0, 0],
+            [1, 1, 0, 0, 0],
+            [1, 1, 1, 0, 0],
+            [1, 1, 1, 1, 0],
+            [1, 1, 1, 1, 1],
+        ]
+    )
+
     @testset "multiset" begin
-        v = [
-            BinaryHDV(v) for v in [
-                    [true, false, false, false, false],
-                    [true, true, false, false, false],
-                    [true, true, true, false, false],
-                    [true, true, true, true, false],
-                    [true, true, true, true, true],
-                ]
-        ]
-        @test multiset(v).v == [true, true, true, false, false]
+        @test multiset(hvs).v == Bool.([1, 1, 1, 0, 0])
     end
+
     @testset "multibind" begin
-        v = [
-            BinaryHDV(v) for v in [
-                    [true, false, false, false, false],
-                    [true, true, false, false, false],
-                    [true, true, true, false, false],
-                    [true, true, true, true, false],
-                    [true, true, true, true, true],
-                ]
-        ]
-        @test multibind(v).v == [true, false, true, false, true]
+        @test multibind(hvs).v == Bool.([1, 0, 1, 0, 1])
     end
+
     @testset "bundlesequence" begin
-        v = [
-            BinaryHDV(v) for v in [
-                    [true, false, false, false, false],
-                    [true, true, false, false, false],
-                    [true, true, true, false, false],
-                    [true, true, true, true, false],
-                    [true, true, true, true, true],
-                ]
-        ]
-        @test bundlesequence(v).v == [true, false, true, false, true]
+        @test bundlesequence(hvs).v == ones(Bool, 5)
+        @test_throws AssertionError bundlesequence([first(hvs)])
     end
+
     @testset "bindsequence" begin
-        v = [
-            BinaryHDV(v) for v in [
-                    [true, false, false, false, false],
-                    [true, true, false, false, false],
-                    [true, true, true, false, false],
-                    [true, true, true, true, false],
-                    [true, true, true, true, true],
-                ]
-        ]
-        @test bindsequence(v).v == [true, false, true, false, true]
+        @test bindsequence(hvs).v == ones(Bool, 5)
+        @test_throws AssertionError bindsequence([first(hvs)])
     end
+
     @testset "hashtable" begin
+        @test hashtable(hvs, hvs) == zeros(Bool, 5)
+        @test_throws AssertionError hashtable(hvs, hvs[1:2])
     end
+
     @testset "crossproduct" begin
+        @test crossproduct(hvs, hvs) == zeros(Bool, 5)
     end
+
     @testset "ngrams" begin
+        @test ngrams(hvs) == Bool.([0, 1, 0, 0, 1])
+        @test_throws AssertionError ngrams(hvs, 0)
+        @test_throws AssertionError ngrams(hvs, length(hvs) + 1)
     end
+
     @testset "graph" begin
+        s = [1, 3, 4, 2, 5]
+        t = [3, 4, 2, 1, 4]
+        @test graph(hvs[s], hvs[t]) == Bool.([0, 0, 0, 0, 0])
+        @test graph(hvs[s], hvs[t]; directed = true) == Bool.([1, 0, 0, 1, 0])
+        @test_throws AssertionError graph(hvs[s], hvs[[1, 2, 3]])
     end
 end
