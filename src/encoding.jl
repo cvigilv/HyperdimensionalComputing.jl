@@ -1,15 +1,15 @@
 """
-    multiset(vs::AbstractVector{<:T})::T where {T <: AbstractHDV}
+    multiset(vs::AbstractVector{<:T})::T where {T <: AbstractHV}
 
 Multiset of input hypervectors, bundles all the input hypervectors together.
 
 # Arguments
-- `vs::AbstractVector{<:AbstractHDV}`: Hypervectors
+- `vs::AbstractVector{<:AbstractHV}`: Hypervectors
 
 # Example
 ```
-julia> vs = [BinaryHDV(10) for _ in 1:10]
-10-element Vector{BinaryHDV}:
+julia> vs = [BinaryHV(10) for _ in 1:10]
+10-element Vector{BinaryHV}:
  [0, 1, 0, 0, 1, 1, 0, 1, 1, 1]
  [1, 0, 1, 0, 0, 0, 1, 1, 1, 0]
  [0, 1, 0, 1, 0, 0, 1, 0, 0, 0]
@@ -22,7 +22,7 @@ julia> vs = [BinaryHDV(10) for _ in 1:10]
  [1, 1, 0, 0, 0, 1, 1, 0, 0, 0]
 
 julia> multiset(vs)
-10-element BinaryHDV:
+10-element BinaryHV:
  0
  1
  0
@@ -54,22 +54,22 @@ where `V` is the hypervector collection, `m` is the size of the hypervector coll
 
 - [`multibind`](@ref): Multibind encoding, binding-variant of this encoder
 """
-function multiset(vs::AbstractVector{<:T})::T where {T <: AbstractHDV}
-    return aggregate(vs)
+function multiset(vs::AbstractVector{<:T})::T where {T <: AbstractHV}
+    return bundle(vs)
 end
 
 """
-    multibind(vs::AbstractVector{<:AbstractHDV})
+    multibind(vs::AbstractVector{<:AbstractHV})
 
 Binding of multiple hypervectors, binds all the input hypervectors together.
 
 # Arguments
-- `vs::AbstractVector{<:AbstractHDV}`: Hypervectors
+- `vs::AbstractVector{<:AbstractHV}`: Hypervectors
 
 # Examples
 ```
-julia> vs = [BinaryHDV(10) for _ in 1:10]
-10-element Vector{BinaryHDV}:
+julia> vs = [BinaryHV(10) for _ in 1:10]
+10-element Vector{BinaryHV}:
  [0, 1, 0, 0, 1, 1, 0, 1, 1, 1]
  [1, 0, 1, 0, 0, 0, 1, 1, 1, 0]
  [0, 1, 0, 1, 0, 0, 1, 0, 0, 0]
@@ -82,7 +82,7 @@ julia> vs = [BinaryHDV(10) for _ in 1:10]
  [1, 1, 0, 0, 0, 1, 1, 0, 0, 0]
 
 julia> multibind(vs)
-10-element BinaryHDV:
+10-element BinaryHV:
  1
  1
  1
@@ -114,23 +114,23 @@ where `V` is the hypervector collection, `m` is the size of the hypervector coll
 
 - [`multiset`](@ref): Multiset encoding, bundling-variant of this encoder
 """
-function multibind(vs::AbstractVector{<:AbstractHDV})
+function multibind(vs::AbstractVector{<:AbstractHV})
     return bind(vs)
 end
 
 
 """
-    bundlesequence(vs::AbstractVector{<:AbstractHDV})
+    bundlesequence(vs::AbstractVector{<:AbstractHV})
 
 Bundling-based sequence. The first value is not permuted, the last value is permuted n-1 times.
 
 # Arguments
-- `vs::AbstractVector{<:AbstractHDV}`: Hypervector sequence
+- `vs::AbstractVector{<:AbstractHV}`: Hypervector sequence
 
 # Examples
 ```
-julia> vs = [BinaryHDV(10) for _ in 1:10]
-10-element Vector{BinaryHDV}:
+julia> vs = [BinaryHV(10) for _ in 1:10]
+10-element Vector{BinaryHV}:
  [0, 1, 0, 0, 1, 1, 0, 1, 1, 1]
  [1, 0, 1, 0, 0, 0, 1, 1, 1, 0]
  [0, 1, 0, 1, 0, 0, 1, 0, 0, 0]
@@ -143,7 +143,7 @@ julia> vs = [BinaryHDV(10) for _ in 1:10]
  [1, 1, 0, 0, 0, 1, 1, 0, 0, 0]
 
 julia> bundlesequence(vs)
-10-element BinaryHDV:
+10-element BinaryHV:
  0
  1
  0
@@ -166,7 +166,7 @@ This encoding is based on the following mathematical notation:
 
 where `V` is the hypervector collection, `m` is the size of the hypervector collection,
 `i` is the position of the entry in the collection, and `\\oplus` and `\\Pi` are the
-bundling and permutation operations.
+bundling and shift operations.
 
 # References
 
@@ -176,23 +176,23 @@ bundling and permutation operations.
 
 - [`bindsequence`](@ref): Binding-sequence encoding, binding-variant of this encoder
 """
-function bundlesequence(vs::AbstractVector{<:AbstractHDV})
+function bundlesequence(vs::AbstractVector{<:AbstractHV})
     @assert length(vs) > 1 "Can't bundle sequence of a single hypervector"
-    return aggregate([Π(hv, i - 1) for (i, hv) in enumerate(vs)])
+    return bundle([shift(hv, i - 1) for (i, hv) in enumerate(vs)])
 end
 
 """
-    bindsequence(vs::AbstractVector{<:AbstractHDV})
+    bindsequence(vs::AbstractVector{<:AbstractHV})
 
 Binding-based sequence. The first value is not permuted, the last value is permuted n-1 times.
 
 # Arguments
-- `vs::AbstractVector{<:AbstractHDV}`: Hypervector sequence
+- `vs::AbstractVector{<:AbstractHV}`: Hypervector sequence
 
 # Examples
 ```
-julia> vs = [BinaryHDV(10) for _ in 1:10]
-10-element Vector{BinaryHDV}:
+julia> vs = [BinaryHV(10) for _ in 1:10]
+10-element Vector{BinaryHV}:
  [0, 1, 0, 0, 1, 1, 0, 1, 1, 1]
  [1, 0, 1, 0, 0, 0, 1, 1, 1, 0]
  [0, 1, 0, 1, 0, 0, 1, 0, 0, 0]
@@ -205,7 +205,7 @@ julia> vs = [BinaryHDV(10) for _ in 1:10]
  [1, 1, 0, 0, 0, 1, 1, 0, 0, 0]
 
 julia> bindsequence(vs)
-10-element BinaryHDV:
+10-element BinaryHV:
  0
  1
  1
@@ -228,7 +228,7 @@ This encoding is based on the following mathematical notation:
 
 where `V` is the hypervector collection, `m` is the size of the hypervector collection,
 `i` is the position of the entry in the collection, and `\\otimes` and `\\Pi` are the
-binding and permutation operations.
+binding and shift operations.
 
 # References
 
@@ -238,33 +238,34 @@ binding and permutation operations.
 
 - [`bundlesequence`](@ref): Bundle-sequence encoding, bundling-variant of this encoder
 """
-function bindsequence(vs::AbstractVector{<:AbstractHDV})
+function bindsequence(vs::AbstractVector{<:AbstractHV})
     @assert length(vs) > 1 "Can't bind sequence of a single hypervector"
-    return bind([Π(hv, i - 1) for (i, hv) in enumerate(vs)])
+    return bind([shift(hv, i - 1) for (i, hv) in enumerate(vs)])
 end
 
 """
-    hashtable(keys::T, values::T) where {T <: AbstractVector{<:AbstractHDV}}
+    hashtable(keys::T, values::T) where {T <: AbstractVector{<:AbstractHV}}
 
 Hash table from keys-values hypervector pairs. Keys and values must be the same length in order
 to encode as hypervector.
 
+<<<<<<< HEAD
 # Arguments
-- `keys::AbstractVector{<:AbstractHDV}`: Keys hypervectors
-- `values::AbstractVector{<:AbstractHDV}`: Values hypervectors
+- `keys::AbstractVector{<:AbstractHV}`: Keys hypervectors
+- `values::AbstractVector{<:AbstractHV}`: Values hypervectors
 
 # Example
 ```
-julia> ks = [BinaryHDV(10) for _ in 1:5]
-5-element Vector{BinaryHDV}:
+julia> ks = [BinaryHV(10) for _ in 1:5]
+5-element Vector{BinaryHV}:
  [0, 0, 0, 1, 0, 1, 1, 0, 0, 0]
  [1, 0, 1, 0, 1, 0, 1, 0, 1, 1]
  [0, 0, 0, 0, 1, 1, 1, 0, 1, 1]
  [1, 0, 0, 0, 0, 1, 1, 0, 1, 0]
  [0, 1, 1, 1, 1, 0, 0, 1, 1, 1]
 
-julia> vs = [BinaryHDV(10) for _ in 1:5]
-5-element Vector{BinaryHDV}:
+julia> vs = [BinaryHV(10) for _ in 1:5]
+5-element Vector{BinaryHV}:
  [0, 1, 0, 0, 1, 1, 0, 1, 0, 0]
  [1, 0, 1, 1, 1, 0, 1, 0, 0, 0]
  [0, 0, 0, 0, 0, 1, 1, 0, 1, 0]
@@ -272,7 +273,7 @@ julia> vs = [BinaryHDV(10) for _ in 1:5]
  [0, 1, 1, 0, 0, 0, 1, 1, 0, 1]
 
 julia> hashtable(ks, vs)
-10-element BinaryHDV:
+10-element BinaryHV:
  0
  0
  0
@@ -301,33 +302,33 @@ and `\\oplus` are the binding and bundling operations.
 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.hash_table.html)
 """
-function hashtable(keys::T, values::T) where {T <: AbstractVector{<:AbstractHDV}}
+function hashtable(keys::T, values::T) where {T <: AbstractVector{<:AbstractHV}}
     @assert length(keys) == length(values) "Number of keys and values aren't equal"
-    return aggregate(map(bind, zip(keys, values)))
+    return bundle(map(bind, zip(keys, values)))
 end
 
 """
-    crossproduct(U::T, V::T) where {T <: AbstractVector{<:AbstractHDV}}
+    crossproduct(U::T, V::T) where {T <: AbstractVector{<:AbstractHV}}
 
 Cross product between two sets of hypervectors.
 
 
 # Arguments
-- `U::AbstractVector{<:AbstractHDV}`: Hypervectors
-- `V::AbstractVector{<:AbstractHDV}`: Hypervectors
+- `U::AbstractVector{<:AbstractHV}`: Hypervectors
+- `V::AbstractVector{<:AbstractHV}`: Hypervectors
 
 # Examples
 ```
-julia> us = [BinaryHDV(10) for _ in 1:5]
-5-element Vector{BinaryHDV}:
+julia> us = [BinaryHV(10) for _ in 1:5]
+5-element Vector{BinaryHV}:
  [1, 1, 1, 1, 1, 0, 0, 1, 0, 0]
  [0, 1, 0, 0, 1, 1, 1, 0, 1, 0]
  [0, 1, 1, 1, 1, 0, 0, 1, 1, 1]
  [0, 1, 1, 0, 1, 0, 1, 1, 1, 0]
  [1, 0, 0, 1, 0, 0, 1, 1, 1, 1]
 
-julia> vs = [BinaryHDV(10) for _ in 1:5]
-5-element Vector{BinaryHDV}:
+julia> vs = [BinaryHV(10) for _ in 1:5]
+5-element Vector{BinaryHV}:
  [0, 1, 1, 1, 1, 1, 0, 1, 0, 0]
  [0, 0, 1, 0, 0, 1, 1, 0, 0, 1]
  [0, 0, 0, 0, 1, 0, 0, 1, 0, 1]
@@ -335,7 +336,7 @@ julia> vs = [BinaryHDV(10) for _ in 1:5]
  [1, 0, 1, 0, 0, 1, 0, 1, 0, 1]
 
 julia> crossproduct(us, vs)
-10-element BinaryHDV:
+10-element BinaryHV:
  0
  0
  1
@@ -369,24 +370,24 @@ and binding operations.
 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.cross_product.html)
 """
-function crossproduct(U::T, V::T) where {T <: AbstractVector{<:AbstractHDV}}
+function crossproduct(U::T, V::T) where {T <: AbstractVector{<:AbstractHV}}
     # TODO: This should be bundled without normalizing
-    return aggregate([multiset(U), multiset(V)]; norm = false)
+    return bundle([multiset(U), multiset(V)]; norm = false)
 end
 
 """
-    ngrams(vs::AbstractVector{<:AbstractHDV}, n::Int = 3)
+    ngrams(vs::AbstractVector{<:AbstractHV}, n::Int = 3)
 
 Creates a hypervector with the _n_-gram statistics of the input.
 
 # Arguments
-- `vs::AbstractVector{<:AbstractHDV}`: Hypervector collection
+- `vs::AbstractVector{<:AbstractHV}`: Hypervector collection
 - `n::Int = 3`: _n_-gram size
 
 # Examples
 ```
-julia> vs = [BinaryHDV(10) for _ in 1:10]
-10-element Vector{BinaryHDV}:
+julia> vs = [BinaryHV(10) for _ in 1:10]
+10-element Vector{BinaryHV}:
  [0, 1, 0, 0, 1, 0, 1, 0, 0, 1]
  [0, 0, 1, 1, 1, 0, 0, 1, 1, 1]
  [0, 0, 1, 0, 0, 1, 1, 1, 0, 0]
@@ -399,7 +400,7 @@ julia> vs = [BinaryHDV(10) for _ in 1:10]
  [1, 1, 0, 0, 0, 1, 1, 1, 0, 1]
 
 julia> ngrams(vs)
-10-element BinaryHDV:
+10-element BinaryHV:
  1
  1
  1
@@ -423,7 +424,7 @@ This encoding is defined by the following mathematical notation:
 where `V` is the collection of hypervectors, `m` is the number of hypervectors in the
 collection `V`, `n` is the window size, `i` is the position in the sequence, `j` is the
 position in the _n_-gram, and `\\oplus`, `\\otimes` and `\\Pi` are the bundling, binding
-and permutation operations.
+and shift operations.
 
 !!! note
     - For `n = 1` use `multiset()` instead
@@ -439,10 +440,10 @@ and permutation operations.
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.ngrams.html)
 
 """
-function ngrams(vs::AbstractVector{<:AbstractHDV}, n::Int = 3)
+function ngrams(vs::AbstractVector{<:AbstractHV}, n::Int = 3)
     m = length(vs)
     @assert 1 <= n <= length(vs) "`n` must be 1 ≤ n ≤ $m"
-    return aggregate([bind([Π(vs[i + j], j - 1) for j in 1:n]) for i in 1:(m - n)])
+    return bundle([bind([shift(vs[i + j], j - 1) for j in 1:n]) for i in 1:(m - n)])
 end
 
 """
@@ -473,7 +474,7 @@ This encoding is based on the following mathematical notation:
 
 where `K` and `V` are the key and value hypervector collections, `m` is the size of the
 hypervector collection, `i` is the position of the entry in the collection, and `\\otimes`,
-`\\oplus` and `\\Pi` are the binding, bundling and permutation operations.
+`\\oplus` and `\\Pi` are the binding, bundling and shift operations.
 
 # See also
 
@@ -484,7 +485,24 @@ hypervector collection, `i` is the position of the entry in the collection, and 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.graph.html)
 
 """
-function graph(source::T, target::T; directed::Bool = false) where {T <: AbstractVector{<:AbstractHDV}}
+function graph(source::T, target::T; directed::Bool = false) where {T <: AbstractVector{<:AbstractHV}}
     @assert length(source) == length(target) "`source` and `target` must be the same length"
-    return hashtable(source, Π.(target, convert(Int, directed)))
+    return hashtable(source, shift.(target, convert(Int, directed)))
 end
+
+
+function level_hypervectors(hv::AbstractHV, n_levels, p = 2 / n_levels; method = "random")
+    methods = ["random"]
+    @assert method ∈ methods "`method` has to be one of $methods"
+    hvs = [hv]
+    #TODO: implement alteratives
+    while length(hvs) < n_levels
+        hv = last(hvs)
+        if method == "random"
+            push!(hvs, perturbate(hv, p))
+        end
+    end
+    return hvs
+end
+
+

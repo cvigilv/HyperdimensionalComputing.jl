@@ -1,16 +1,26 @@
 module HyperdimensionalComputing
 
-using Distances
+using Distances, Random, Distributions, LinearAlgebra
 
-export AbstractHDV, BinaryHDV, BipolarHDV,
-    GradedBipolarHDV, RealHDV, GradedHDV
-export offsetcombine, offsetcombine!
-export aggregate, aggregate!, aggregatewith!, bind, bind!, Π, Π!, resetoffset!
-export similarity, jacc_sim, cos_sim
-export train, predict, retrain!
+include("types.jl")
+export AbstractHV,
+    BinaryHV,
+    BipolarHV,
+    GradedBipolarHV,
+    RealHV,
+    GradedHV,
+    TernaryHV
 
-include("vectors.jl")
 include("operations.jl")
+export bundle,
+    bind,
+    shift!,
+    shift,
+    ρ,
+    ρ!,
+    perturbate,
+    perturbate!
+
 include("encoding.jl")
 export multiset,
     multibind,
@@ -20,7 +30,13 @@ export multiset,
     crossproduct,
     ngrams,
     graph
+
 include("inference.jl")
-include("learning.jl")
+export similarity,
+   sim_cos,
+   sim_jacc,
+   dist_hamming
+
+#include("learning.jl")
 
 end
