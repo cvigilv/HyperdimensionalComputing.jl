@@ -1,32 +1,52 @@
 @testset "encoding" begin
-    # TODO add more examples and types to test
+    hvs = BinaryHV.(
+        [
+            [1, 0, 0, 0, 0],
+            [1, 1, 0, 0, 0],
+            [1, 1, 1, 0, 0],
+            [1, 1, 1, 1, 0],
+            [1, 1, 1, 1, 1],
+        ]
+    )
 
-    hdvs = [GradedHDV(10) for i in 1:5]
-    alphabet = "STOCK"
-    basis = Dict(zip(alphabet, hdvs))
-
-    @testset "NGrams" begin
-
-        fourgrams = compute_4_grams(hdvs)
-        fourgrams_chars = compute_4_grams(basis)
-
-        @test fourgrams.d[2][1][4][3] ≈ Π(hdvs[2], 0) * Π(hdvs[1], 1) * Π(hdvs[4], 2) * Π(hdvs[3], 3)
-        @test fourgrams.d[2][1][4][3] ≈ fourgrams_chars.d['T']['S']['C']['O']
+    @testset "multiset" begin
+        @test multiset(hvs).v == Bool.([1, 1, 1, 0, 0])
     end
 
-    @testset "sequence embedding" begin
-        sequence = [2, 3, 5, 1, 3, 4]
+    @testset "multibind" begin
+        @test multibind(hvs).v == Bool.([1, 0, 1, 0, 1])
+    end
 
-        emb = sequence_embedding(sequence, hdvs, 3)
+    @testset "bundlesequence" begin
+        @test bundlesequence(hvs).v == ones(Bool, 5)
+        @test_throws AssertionError bundlesequence([first(hvs)])
+    end
 
-        @test typeof(emb) == eltype(hdvs)
+    @testset "bindsequence" begin
+        @test bindsequence(hvs).v == ones(Bool, 5)
+        @test_throws AssertionError bindsequence([first(hvs)])
+    end
 
-        threegrams = compute_3_grams(hdvs)
+    @testset "hashtable" begin
+        @test hashtable(hvs, hvs) == zeros(Bool, 5)
+        @test_throws AssertionError hashtable(hvs, hvs[1:2])
+    end
 
-        @test sequence_embedding(sequence, threegrams) ≈ emb
+    @testset "crossproduct" begin
+        @test crossproduct(hvs, hvs) == zeros(Bool, 5)
+    end
 
-        threegrams = compute_3_grams(basis)
+    @testset "ngrams" begin
+        @test ngrams(hvs) == Bool.([0, 1, 0, 0, 1])
+        @test_throws AssertionError ngrams(hvs, 0)
+        @test_throws AssertionError ngrams(hvs, length(hvs) + 1)
+    end
 
-        @test sequence_embedding([alphabet[i] for i in sequence], threegrams) ≈ emb
+    @testset "graph" begin
+        s = [1, 3, 4, 2, 5]
+        t = [3, 4, 2, 1, 4]
+        @test graph(hvs[s], hvs[t]) == Bool.([0, 0, 0, 0, 0])
+        @test graph(hvs[s], hvs[t]; directed = true) == Bool.([1, 0, 0, 1, 0])
+        @test_throws AssertionError graph(hvs[s], hvs[[1, 2, 3]])
     end
 end

@@ -18,6 +18,5 @@ similarity(x::BipolarHV, y::BipolarHV) = sim_cos(x, y)
 similarity(x::TernaryHV, y::TernaryHV) = sim_cos(x, y)
 similarity(x::GradedBipolarHV, y::GradedBipolarHV) = sim_cos(x, y)
 similarity(x::RealHV, y::RealHV) = sim_cos(x, y)
-
 similarity(x::BinaryHV, y::BinaryHV) = sim_jacc(x, y)
 similarity(x::GradedHV, y::GradedHV) = sim_jacc(x, y)

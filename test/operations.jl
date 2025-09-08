@@ -28,6 +28,8 @@ using LinearAlgebra, Random
 
             @testset "bind $HV" begin
                 @test bind(hv1, hv2) isa HV
+                @test bind([hv1, hv2]) isa HV
+                @test bind([HV(N) for i in 1:5]) isa HV
                 @test hv1 * hv2 isa HV
             end
 

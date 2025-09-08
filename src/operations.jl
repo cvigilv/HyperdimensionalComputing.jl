@@ -160,8 +160,8 @@ Base.bind(hv1::TernaryHV, hv2::TernaryHV) = TernaryHV(hv1.v .* hv2.v)
 Base.bind(hv1::RealHV, hv2::RealHV) = RealHV(hv1.v .* hv2.v)
 Base.bind(hv1::GradedHV, hv2::GradedHV) = GradedHV(fuzzy_xor.(hv1.v, hv2.v))
 Base.bind(hv1::GradedBipolarHV, hv2::GradedBipolarHV) = GradedBipolarHV(fuzzy_xor_bipol.(hv1.v, hv2.v))
-
 Base.:*(hv1::HV, hv2::HV) where {HV <: AbstractHV} = bind(hv1, hv2)
+Base.bind(hvs::AbstractVector{HV}) where {HV <: AbstractHV} = prod(hvs)
 
 
 # SHIFTING
