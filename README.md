@@ -1,9 +1,9 @@
 # Hyperdimensional Computing in Julia
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://dimiboeckaerts.github.io/HyperdimensionalComputing.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://dimiboeckaerts.github.io/HyperdimensionalComputing.jl/dev)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://michielstock.github.io/HyperdimensionalComputing.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://michielstock.github.io/HyperdimensionalComputing.jl/dev)
 [![Build Status](https://github.com/dimiboeckaerts/HyperdimensionalComputing.jl/workflows/CI/badge.svg)](https://github.com/dimiboeckaerts/HyperdimensionalComputing.jl/actions)
-[![Coverage](https://codecov.io/gh/dimiboeckaerts/HyperdimensionalComputing.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/dimiboeckaerts/HyperdimensionalComputing.jl)
+[![code style: runic](https://img.shields.io/badge/code_style-%E1%9A%B1%E1%9A%A2%E1%9A%BE%E1%9B%81%E1%9A%B2-black)](https://github.com/fredrikekre/Runic.jl)
 
 
 This package implements special types of vectors and associated methods for hyperdimensional computing. Hyperdimensional computing (HDC) is a paragdigm to represent patterns by means of a high-dimensional vectors (typically 10,000 dimensions). Specific operations can be used to create new vectors by combining the information or encoding some kind of position. HDC is an alternative machine learning method that is extremely computationally efficient. It is inspired by the distributed, holographic representation of patterns in the brain. Typically, the high-dimensionality is more important than the nature of the operations. This package provides various types of vectors (binary, graded, bipolar...) with sensible operations for *aggragating*, *binding* and *permutation*. Basic functionality for fitting a k-NN like classifier is also supported.
