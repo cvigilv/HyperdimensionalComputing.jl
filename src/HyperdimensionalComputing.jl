@@ -29,7 +29,8 @@ export multiset,
     hashtable,
     crossproduct,
     ngrams,
-    graph
+    graph,
+    level
 
 include("inference.jl")
 export similarity,

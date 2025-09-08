@@ -372,7 +372,7 @@ and binding operations.
 """
 function crossproduct(U::T, V::T) where {T <: AbstractVector{<:AbstractHV}}
     # TODO: This should be bundled without normalizing
-    return bundle([multiset(U), multiset(V)]; norm = false)
+    return bundle([multiset(U), multiset(V)])
 end
 
 """
@@ -491,16 +491,23 @@ function graph(source::T, target::T; directed::Bool = false) where {T <: Abstrac
 end
 
 
-function level_hypervectors(hv::AbstractHV, n_levels, p = 2 / n_levels; method = "random")
-    methods = ["random"]
-    @assert method ∈ methods "`method` has to be one of $methods"
-    hvs = [hv]
-    #TODO: implement alteratives
-    while length(hvs) < n_levels
-        hv = last(hvs)
-        if method == "random"
-            push!(hvs, perturbate(hv, p))
-        end
+"""
+	level(v::HV, n::Int) where {HV <: AbstractHV}
+	level(HV::Type{<:AbstractHV}, n::Int; dims::Int = 10_000)
+
+Creates a set of level correlated hypervectors, where the first and last hypervectors are quasi-orthogonal.
+
+# Arguments
+- `v::HV`: Base hypervector
+- `n::Int`: Number of levels
+"""
+function level(v::HV, n::Int) where {HV <: AbstractHV}
+    hvs = [v]
+    p = 2 / n
+    while length(hvs) < n
+        u = last(hvs)
+        push!(hvs, perturbate(u, p))
     end
     return hvs
 end
+level(HV::Type{<:AbstractHV}, n::Int; dims::Int = 10_000) = level(HV(dims), n)
