@@ -504,5 +504,3 @@ function level_hypervectors(hv::AbstractHV, n_levels, p = 2 / n_levels; method =
     end
     return hvs
 end
-
-
