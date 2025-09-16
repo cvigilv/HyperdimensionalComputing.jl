@@ -1,5 +1,7 @@
 @testset "inference" begin
 
+    import HyperdimensionalComputing: sim_cos, sim_jacc
+
     @testset "BinaryHV" begin
         x = BinaryHV([true, false, true, true])
         y = BinaryHV([false, false, false, true])
@@ -53,5 +55,20 @@
         yd = collect(y)
 
         @test similarity(x, y) ≈ sim_cos(x.v, y.v) ≈ dot(xd, yd) / norm(xd) / norm(yd)
+    end
+
+    @testset "NN" begin
+        x = BinaryHV(trues(5))
+
+        collection = [BinaryHV([i ≤ k for i in 1:5]) for k in 1:5]
+
+        @test nearest_neighbor(x, collection)[2] == 5
+        top2 = nearest_neighbor(x, collection, 2)
+        @test Set(last.(top2)) == Set([4, 5])
+
+        dict = Dict(zip("abcde", collection))
+        @test nearest_neighbor(x, dict)[2] == 'e'
+        top2 = nearest_neighbor(x, dict, 2)
+        @test Set(last.(top2)) == Set("de")
     end
 end
