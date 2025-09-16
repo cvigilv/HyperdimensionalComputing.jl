@@ -36,6 +36,7 @@ include("inference.jl")
 export similarity,
     nearest_neighbor
 
+
 #include("learning.jl")
 
 end
