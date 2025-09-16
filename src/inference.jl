@@ -1,5 +1,5 @@
 #=
-inference.jl; This file implements functions to compare two hyperdimensional vectors.
+This file implements all similarity metrics + modules for finding the closest match.
 =#
 
 using LinearAlgebra

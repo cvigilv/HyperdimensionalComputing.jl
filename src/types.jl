@@ -33,10 +33,6 @@ LinearAlgebra.normalize!(hv::AbstractHV) = hv
 Base.hash(hv::AbstractHV) = hash(hv.v)
 Base.copy(hv::HV) where {HV <: AbstractHV} = HV(copy(hv.v))
 
-
-get_vector(v::AbstractVector) = v
-get_vector(hv::AbstractHV) = hv.v
-
 # Gives an empty Vector (filled with neutral elelment) that
 # the `hv::AbstractHV` type uses.
 empty_vector(hv::AbstractHV) = zero(hv.v)
