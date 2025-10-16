@@ -43,8 +43,10 @@ function similarity(x::AbstractVector, y::AbstractVector; method::Symbol)
 end
 
 nearest_neighbor(x, collection; kwargs...) =
-    maximum((similarity(x, xi; kwargs...), i, xi)
-            for (i, xi) in enumerate(collection))
+    maximum(
+    (similarity(x, xi; kwargs...), i, xi)
+        for (i, xi) in enumerate(collection)
+)
 
 nearest_neighbor(x, collection::Dict; kwargs...) =
     maximum((similarity(x, xi; kwargs...), k, xi) for (k, xi) in collection)
@@ -63,13 +65,17 @@ If a number `k` is given, the `k` closest neighbor are returned, as a sorted
 list of `(τ, i)`.
 """
 function nearest_neighbor(x, collection, k::Int; kwargs...)
-    sims = [(similarity(x, xi; kwargs...), i)
-            for (i, xi) in enumerate(collection)]
-    return partialsort!(sims, 1:k, rev=true)
+    sims = [
+        (similarity(x, xi; kwargs...), i)
+            for (i, xi) in enumerate(collection)
+    ]
+    return partialsort!(sims, 1:k, rev = true)
 end
 
 function nearest_neighbor(x, collection::Dict, k::Int; kwargs...)
-    sims = [(similarity(x, xi; kwargs...), i)
-            for (i, xi) in collection]
-    return partialsort!(sims, 1:k, rev=true)
+    sims = [
+        (similarity(x, xi; kwargs...), i)
+            for (i, xi) in collection
+    ]
+    return partialsort!(sims, 1:k, rev = true)
 end
