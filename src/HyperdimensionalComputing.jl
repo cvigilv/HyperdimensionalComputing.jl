@@ -34,9 +34,8 @@ export multiset,
 
 include("inference.jl")
 export similarity,
-    sim_cos,
-    sim_jacc,
-    dist_hamming
+    nearest_neighbor
+
 
 #include("learning.jl")
 

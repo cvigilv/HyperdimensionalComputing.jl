@@ -33,17 +33,11 @@ LinearAlgebra.normalize!(hv::AbstractHV) = hv
 Base.hash(hv::AbstractHV) = hash(hv.v)
 Base.copy(hv::HV) where {HV <: AbstractHV} = HV(copy(hv.v))
 
-
-get_vector(v::AbstractVector) = v
-get_vector(hv::AbstractHV) = hv.v
-
 # Gives an empty Vector (filled with neutral elelment) that
 # the `hv::AbstractHV` type uses.
 empty_vector(hv::AbstractHV) = zero(hv.v)
 
 eldist(hv::AbstractHV) = eldist(typeof(hv))
-
-# trait for checking which vector is used internall
 
 
 # We always provide a constructor with optinal dimensionality (n=10,000 by default) and
