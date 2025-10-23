@@ -22,7 +22,7 @@ function Base.show(io::IO, hv::AbstractHV)
     return print(io, "$(length(hv))-element $(typeof(hv)) - m ± sd: $(round(mean(hv))) ± $(round(std(hv)))")
 end
 
-function Base.show(io::IO, hv::Union{BinaryHV,BipolarHV})
+function Base.show(io::IO, hv::Union{BinaryHV, BipolarHV})
     n = hv isa BinaryHV ? 0 : -1  # negative element
     return print(io, "1 / $n : $(count(hv.v)) / $(length(hv) - count(hv.v))")
 end
