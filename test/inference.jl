@@ -57,6 +57,14 @@
         @test similarity(x, y) ≈ sim_cos(x.v, y.v) ≈ dot(xd, yd) / norm(xd) / norm(yd)
     end
 
+    @testset "Similarity matrix" begin
+        levels = level(RealHV(100), 10)
+        M = similarity(levels)
+        @test M isa Matrix
+        @test size(M) == (10, 10)
+        @test M ≈ M'
+    end
+
     @testset "NN" begin
         x = BinaryHV(trues(5))
 

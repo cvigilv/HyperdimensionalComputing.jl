@@ -42,11 +42,24 @@ function similarity(x::AbstractVector, y::AbstractVector; method::Symbol)
     end
 end
 
+
+similarity(hvs::AbstractVector{<:AbstractHV}) = [similarity(hv1, hv2) for hv1 in hvs, hv2 in hvs]
+
+"""
+    similarity(hvs::AbstractVector{<:AbstractHV})
+
+Computes the similarity matrix for a vector of hypervectors using
+the similarity metrics defined by the pairwise version of `similarity`.
+"""
+similarity(hvs::AbstractVector{<:AbstractHV}; method...) = [similarity(hv1, hv2; method...)
+                                                            for hv1 in hvs, hv2 in hvs]
+
+
 nearest_neighbor(x, collection; kwargs...) =
     maximum(
-    (similarity(x, xi; kwargs...), i, xi)
+        (similarity(x, xi; kwargs...), i, xi)
         for (i, xi) in enumerate(collection)
-)
+    )
 
 nearest_neighbor(x, collection::Dict; kwargs...) =
     maximum((similarity(x, xi; kwargs...), k, xi) for (k, xi) in collection)
@@ -67,15 +80,15 @@ list of `(τ, i)`.
 function nearest_neighbor(x, collection, k::Int; kwargs...)
     sims = [
         (similarity(x, xi; kwargs...), i)
-            for (i, xi) in enumerate(collection)
+        for (i, xi) in enumerate(collection)
     ]
-    return partialsort!(sims, 1:k, rev = true)
+    return partialsort!(sims, 1:k, rev=true)
 end
 
 function nearest_neighbor(x, collection::Dict, k::Int; kwargs...)
     sims = [
         (similarity(x, xi; kwargs...), i)
-            for (i, xi) in collection
+        for (i, xi) in collection
     ]
-    return partialsort!(sims, 1:k, rev = true)
+    return partialsort!(sims, 1:k, rev=true)
 end
