@@ -19,15 +19,15 @@ end
 function Base.show(io::IO, mime::MIME"text/plain", hv::AbstractHV)
     println(io, "$(length(hv))-element $(typeof(hv))")
     println(io, "mean ± std : $(round(mean(hv), digits = 3)) ± $(round(std(hv), digits = 3))")
-    println(io, boxplot(hv.v))
+    println(io, UnicodePlotting.histogram(hv.v))
     return println(io, unicodeheatmap(hv))
 end
 
-function Base.show(io::IO, mime::MIME"text/plain", hv::Union{BinaryHV, BipolarHV})
+function Base.show(io::IO, mime::MIME"text/plain", hv::Union{BinaryHV,BipolarHV})
     counts = Dict(e => count(==(e), hv) for e in unique(hv))
-    n = hv isa BinaryHV ? 0 : -1  # negative element
+    #n = hv isa BinaryHV ? 0 : -1  # negative element
     println(io, "$(length(hv))-element $(typeof(hv))")
-    println(io, "1 / $n : $(count(hv.v)) / $(length(hv) - count(hv.v))")
+    #println(io, "1 / $n : $(count(hv.v)) / $(length(hv) - count(hv.v))")
     println(io, barplot(counts))
     return println(io, unicodeheatmap(hv))
 end
