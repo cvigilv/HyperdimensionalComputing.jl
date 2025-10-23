@@ -54,7 +54,7 @@ where `V` is the hypervector collection, `m` is the size of the hypervector coll
 
 - [`multibind`](@ref): Multibind encoding, binding-variant of this encoder
 """
-function multiset(vs::AbstractVector{<:T})::T where {T <: AbstractHV}
+function multiset(vs::AbstractVector{<:T})::T where {T<:AbstractHV}
     return bundle(vs)
 end
 
@@ -301,7 +301,7 @@ and `\\oplus` are the binding and bundling operations.
 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.hash_table.html)
 """
-function hashtable(keys::T, values::T) where {T <: AbstractVector{<:AbstractHV}}
+function hashtable(keys::T, values::T) where {T<:AbstractVector{<:AbstractHV}}
     @assert length(keys) == length(values) "Number of keys and values aren't equal"
     return bundle(map(prod, zip(keys, values)))
 end
@@ -369,7 +369,7 @@ and binding operations.
 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.cross_product.html)
 """
-function crossproduct(U::T, V::T) where {T <: AbstractVector{<:AbstractHV}}
+function crossproduct(U::T, V::T) where {T<:AbstractVector{<:AbstractHV}}
     # TODO: This should be bundled without normalizing
     return bind(multiset(U), multiset(V))
 end
@@ -439,11 +439,11 @@ and shift operations.
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.ngrams.html)
 
 """
-function ngrams(vs::AbstractVector{<:AbstractHV}, n::Int = 3)
+function ngrams(vs::AbstractVector{<:AbstractHV}, n::Int=3)
     l = length(vs)
     p = l - n + 1
     @assert 1 <= n <= length(vs) "`n` must be 1 ≤ n ≤ $l"
-    return bundle([bind([shift(vs[i + j], j) for j in 0:(n - 1)]) for i in 1:p])
+    return bundle([bind([shift(vs[i+j], j) for j in 0:(n-1)]) for i in 1:p])
 end
 
 """
@@ -485,7 +485,7 @@ hypervector collection, `i` is the position of the entry in the collection, and 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.graph.html)
 
 """
-function graph(source::T, target::T; directed::Bool = false) where {T <: AbstractVector{<:AbstractHV}}
+function graph(source::T, target::T; directed::Bool=false) where {T<:AbstractVector{<:AbstractHV}}
     @assert length(source) == length(target) "`source` and `target` must be the same length"
     return hashtable(source, shift.(target, convert(Int, directed)))
 end
@@ -501,7 +501,7 @@ Creates a set of level correlated hypervectors, where the first and last hyperve
 - `v::HV`: Base hypervector
 - `n::Int`: Number of levels (alternatively, provide a vector to be encoded)
 """
-function level(v::HV, n::Int) where {HV <: AbstractHV}
+function level(v::HV, n::Int) where {HV<:AbstractHV}
     hvs = [v]
     p = 2 / n
     while length(hvs) < n
@@ -511,14 +511,14 @@ function level(v::HV, n::Int) where {HV <: AbstractHV}
     return hvs
 end
 
-level(HV::Type{<:AbstractHV}, n::Int; dims::Int = 10_000) = level(HV(dims), n)
+level(HV::Type{<:AbstractHV}, n::Int; dims::Int=10_000) = level(HV(dims), n)
 
 level(HVv, vals::AbstractVector) = level(HVv, length(vals))
 level(HVv, vals::UnitRange) = level(HVv, length(vals))
 
 
 """
-    level_encoder(hvlevels::AbstractVector{<:AbstractHV}, numvalues; testbound=false)
+    encodelevel(hvlevels::AbstractVector{<:AbstractHV}, numvalues; testbound=false)
 
 Generate an encoding function based on `level`, for encoding numerical values. It returns a function
 that gives the corresponding hypervector for a given numerical input.
@@ -533,12 +533,12 @@ that gives the corresponding hypervector for a given numerical input.
 numvalues = range(0, 2pi, 100)
 hvlevels = level(BipolarHV(), 100)
 
-encoder = level_encoder(hvlevels, numvalues)
+encoder = encodelevel(hvlevels, numvalues)
 
 encoder(pi/3)  # hypervector that best represents this numerical value
 ```
 """
-function level_encoder(hvlevels::AbstractVector{<:AbstractHV}, numvalues; testbound = false)
+function encodelevel(hvlevels::AbstractVector{<:AbstractHV}, numvalues; testbound=false)
     @assert length(hvlevels) == length(numvalues) "HV levels do not match numerical values"
     # construct the encoder
     function encoder(x::Number)
@@ -550,17 +550,17 @@ function level_encoder(hvlevels::AbstractVector{<:AbstractHV}, numvalues; testbo
 end
 
 """
-    level_encoder(hvlevels::AbstractVector{<:AbstractHV}, a::Number, b::Number; testbound=false)
+    encodelevel(hvlevels::AbstractVector{<:AbstractHV}, a::Number, b::Number; testbound=false)
 
-See `level_encoder`, same but provide lower (`a`) and upper (`b`) limit of the interval to be encoded.
+See `encodelevel`, same but provide lower (`a`) and upper (`b`) limit of the interval to be encoded.
 """
-level_encoder(hvlevels::AbstractVector{<:AbstractHV}, a::Number, b::Number; testbound = false) = level_encoder(hvlevels, range(a, b, length(hvlevels)); testbound)
+encodelevel(hvlevels::AbstractVector{<:AbstractHV}, a::Number, b::Number; testbound=false) = encodelevel(hvlevels, range(a, b, length(hvlevels)); testbound)
 
-level_encoder(HV, numvalues; testbound = false) = level_encoder(level(HV, length(numvalues)), numvalues; testbound)
+encodelevel(HV, numvalues; testbound=false) = encodelevel(level(HV, length(numvalues)), numvalues; testbound)
 
 
 """
-    level_decoder(hvlevels::AbstractVector{<:AbstractHV}, numvalues)
+    decodelevel(hvlevels::AbstractVector{<:AbstractHV}, numvalues)
 
 Generate a decoding function based on `level`, for decoding numerical values. It returns a function
 that gives the numerical value for a given hypervector, based on similarity matching.
@@ -574,12 +574,12 @@ that gives the numerical value for a given hypervector, based on similarity matc
 numvalues = range(0, 2pi, 100)
 hvlevels = level(BipolarHV(), 100)
 
-decoder = level_decoder(hvlevels, numvalues)
+decoder = decodelevel(hvlevels, numvalues)
 
 decoder(hvlevels[17])  # value that closely matches the corresponding HV
 ```
 """
-function level_decoder(hvlevels::AbstractVector{<:AbstractHV}, numvalues)
+function decodelevel(hvlevels::AbstractVector{<:AbstractHV}, numvalues)
     @assert length(hvlevels) == length(numvalues) "HV levels do not match numerical values"
     # construct the decoder
     function decoder(hv::AbstractHV)
@@ -589,14 +589,14 @@ function level_decoder(hvlevels::AbstractVector{<:AbstractHV}, numvalues)
     return decoder
 end
 
-level_decoder(hvlevels::AbstractVector{<:AbstractHV}, a::Number, b::Number) = level_decoder(hvlevels, range(a, b, length(hvlevels)))
+decodelevel(hvlevels::AbstractVector{<:AbstractHV}, a::Number, b::Number) = decodelevel(hvlevels, range(a, b, length(hvlevels)))
 
-level_decoder(HV, numvalues; testbound = false) = level_decoder(level(HV, length(numvalues)), numvalues)
+decodelevel(HV, numvalues; testbound=false) = decodelevel(level(HV, length(numvalues)), numvalues)
 
 """
-    levels_encoder_decoder(hvlevels, numvals..., kwargs...)
+    convertlevel(hvlevels, numvals..., kwargs...)
 
-Creates the `encoder` and `decoder` for a level incoding in one step. See `level_encoder`
-and `level_decoder` for their respective documentations.
+Creates the `encoder` and `decoder` for a level incoding in one step. See `encodelevel`
+and `decodelevel` for their respective documentations.
 """
-levels_encoder_decoder(hvlevels, numvals...; kwargs...) = level_encoder(hvlevels, numvals...; kwargs...), level_decoder(hvlevels, numvals..., kwargs...)
+convertlevel(hvlevels, numvals...; kwargs...) = encodelevel(hvlevels, numvals...; kwargs...), decodelevel(hvlevels, numvals..., kwargs...)

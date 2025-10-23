@@ -31,9 +31,9 @@ export multiset,
     ngrams,
     graph,
     level,
-    level_encoder,
-    level_decoder,
-    levels_encoder_decoder
+    encodelevel,
+    decodelevel,
+    convertlevel
 
 include("inference.jl")
 export similarity,
