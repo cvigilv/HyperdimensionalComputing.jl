@@ -10,7 +10,7 @@ function Base.show(io::IO, mime::MIME"text/plain", hv::AbstractHV)
     return println(io, "mean ± std : $(round(mean(hv), digits = 3)) ± $(round(std(hv), digits = 3))")
 end
 
-function Base.show(io::IO, mime::MIME"text/plain", hv::Union{BinaryHV,BipolarHV})
+function Base.show(io::IO, mime::MIME"text/plain", hv::Union{BinaryHV, BipolarHV})
     counts = Dict(e => count(==(e), hv) for e in unique(hv))
     n = hv isa BinaryHV ? 0 : -1  # negative element
     println(io, "$(length(hv))-element $(typeof(hv))")
