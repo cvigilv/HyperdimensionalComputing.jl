@@ -30,7 +30,10 @@ export multiset,
     crossproduct,
     ngrams,
     graph,
-    level
+    level,
+    level_encoder,
+    level_decoder,
+    levels_encoder_decoder
 
 include("inference.jl")
 export similarity,
