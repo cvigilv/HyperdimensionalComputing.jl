@@ -32,10 +32,14 @@ export multiset,
     crossproduct,
     ngrams,
     graph,
-    level
+    level,
+    encodelevel,
+    decodelevel,
+    convertlevel
 
 include("inference.jl")
 export similarity,
+    δ,
     nearest_neighbor
 
 

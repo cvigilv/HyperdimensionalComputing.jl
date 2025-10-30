@@ -7,6 +7,7 @@
         y = BinaryHV([false, false, false, true])
 
         @test similarity(x, y) ≈ 1 / 3 ≈ sim_jacc(x.v, y.v)
+        @test similarity(x, y) == δ(x)(y)
     end
 
     @testset "GradedHV" begin
@@ -14,7 +15,7 @@
         y = GradedHV([0.9, 0.8, 0.1, 0.3])
 
         @test similarity(x, y) ≈ sim_jacc(x.v, y.v) ≈ dot(x.v, y.v) / sum(xi + yi - xi * yi for (xi, yi) in zip(x, y))
-
+        @test similarity(x, y) == δ(x)(y)
     end
 
     @testset "BipolarHV" begin
@@ -25,6 +26,7 @@
         yd = collect(y)
 
         @test similarity(x, y) ≈ sim_cos(x, y) ≈ dot(xd, yd) / norm(xd) / norm(yd)
+        @test similarity(x, y) == δ(x)(y)
     end
 
     @testset "TernaryHV" begin
@@ -35,6 +37,7 @@
         yd = collect(y)
 
         @test similarity(x, y) ≈ sim_cos(x.v, y.v) ≈ dot(xd, yd) / norm(xd) / norm(yd)
+        @test similarity(x, y) == δ(x)(y)
     end
 
     @testset "GradedBipolarHV" begin
@@ -45,6 +48,7 @@
         yd = collect(y)
 
         @test similarity(x, y) ≈ sim_cos(x.v, y.v) ≈ dot(xd, yd) / norm(xd) / norm(yd)
+        @test similarity(x, y) == δ(x)(y)
     end
 
     @testset "RealHV" begin
@@ -55,6 +59,15 @@
         yd = collect(y)
 
         @test similarity(x, y) ≈ sim_cos(x.v, y.v) ≈ dot(xd, yd) / norm(xd) / norm(yd)
+        @test similarity(x, y) == δ(x)(y)
+    end
+
+    @testset "Similarity matrix" begin
+        levels = level(RealHV(100), 10)
+        M = similarity(levels)
+        @test M isa Matrix
+        @test size(M) == (10, 10)
+        @test M ≈ M'
     end
 
     @testset "NN" begin
