@@ -120,8 +120,7 @@ accuracy = correct / sum(test)
 #
 # One of the intersting properties of HDC is that we can train models with small amounts or even
 # a single training data point. Let's test this property by repeating the previous experiment
-# but this time using different training splits ranging from 5% (around 3 data points per class)
-# to 95% (around 48 data points per class).
+# but this time using different training splits ranging 1 to 49 data points per class.
 #
 # First, let's define a small function that trains our model and evaluates it based on a given
 # number of training points:
