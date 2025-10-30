@@ -37,6 +37,7 @@ export multiset,
 
 include("inference.jl")
 export similarity,
+    δ,
     nearest_neighbor
 
 
