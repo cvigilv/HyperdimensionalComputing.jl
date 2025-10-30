@@ -2,7 +2,7 @@ const n = 100
 
 using Distributions, LinearAlgebra
 
-@testset "vectors" begin
+@testset "types" begin
     @testset "BipolarHV" begin
 
         hdv = BipolarHV(n)

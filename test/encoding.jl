@@ -49,4 +49,18 @@
         @test graph(hvs[s], hvs[t]; directed = true) == Bool.([1, 0, 0, 1, 0])
         @test_throws AssertionError graph(hvs[s], hvs[[1, 2, 3]])
     end
+
+    @testset "levels" begin
+        numvals = 0:0.1:2pi
+        levels = level(BinaryHV(100), numvals)
+
+        @test length(levels) == length(numvals)
+        @test eltype(levels) <: BinaryHV
+
+        encoder, decoder = convertlevel(levels, numvals)
+        hv = encoder(1.467)
+        @test hv isa BinaryHV
+        x = decoder(hv)
+        @test 1 ≤ x ≤ 2
+    end
 end

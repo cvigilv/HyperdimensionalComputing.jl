@@ -11,6 +11,8 @@ export AbstractHV,
     GradedHV,
     TernaryHV
 
+include("representations.jl")
+
 include("operations.jl")
 export bundle,
     bind,
@@ -30,13 +32,16 @@ export multiset,
     crossproduct,
     ngrams,
     graph,
-    level
+    level,
+    encodelevel,
+    decodelevel,
+    convertlevel
 
 include("inference.jl")
 export similarity,
-    sim_cos,
-    sim_jacc,
-    dist_hamming
+    δ,
+    nearest_neighbor
+
 
 #include("learning.jl")
 
