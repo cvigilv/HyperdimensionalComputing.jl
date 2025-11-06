@@ -63,6 +63,8 @@ function BipolarHV(
     return BipolarHV(bitrand(rng_instance, dims))
 end
 
+BipolarHV(v::AbstractVector{<:Integer}) = BipolarHV(v .> 0)
+
 # Helpers
 Base.getindex(hv::BipolarHV, i) = hv.v[i] ? 1 : -1
 Base.sum(hv::BipolarHV) = 2sum(hv.v) - length(hv.v)

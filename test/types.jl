@@ -16,6 +16,7 @@ using Distributions, LinearAlgebra
         @test similar(hdv) isa BipolarHV
         @test sum(hdv) == sum(vi for vi in hdv)
         @test BipolarHV(s) == BipolarHV(; seed = hash_s)
+        @test BipolarHV([-1, 0, 1]) == BipolarHV([false, false, true])
     end
 
     @testset "BinaryHV" begin

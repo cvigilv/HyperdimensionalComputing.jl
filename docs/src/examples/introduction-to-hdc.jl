@@ -27,9 +27,9 @@ BipolarHV()
 BipolarHV(; dims = 8)
 
 # Alternatively, one can create a hypervector directly from a `Vector{T}` where `{T}` is an
-# appropiate data type, e.g. booleans for BipolarHV:
+# appropiate data type, e.g. integers for BipolarHV:
 
-BipolarHV(rand((false, true), 8))
+BipolarHV(rand((-1, 1), 8))
 
 # or you can directly pass any Julia structure to use it as a seed for the hypervector
 # generation:
