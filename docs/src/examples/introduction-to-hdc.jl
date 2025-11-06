@@ -213,11 +213,11 @@ memory == hashtable(H_animals, H_sounds)
 
 # Querying memory to search for dog's sound:
 
-findmax(hv -> similarity(memory * H_dog, hv), H_sounds)
+nearest_neighbor(H_dog * memory, H_sounds)
 
 # Querying memory to search which animals go "moo":
 
-findmax(hv -> similarity(memory * H_moo, hv), H_animals)
+nearest_neighbor(H_moo * memory, H_animals)
 
 # This is a very simple example, but you could think of having a more complex thing going on or
 # having more animals that, for example, share sounds.
@@ -252,6 +252,9 @@ H_phrases = map(encode, phrases)
 # Now that we have the sentence hypervectors, let's search for "crazy" in phrases:
 
 query = map(c -> BinaryHV(c), collect("crazy")) |> ngrams
-findmax(h -> similarity(query, h), H_phrases)
+
+#
+
+nearest_neighbor(query, H_phrases)
 
 # Great! We correctly found that "crazy" is in phrase 3.
