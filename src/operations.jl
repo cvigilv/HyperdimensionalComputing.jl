@@ -164,9 +164,7 @@ Base.:*(hv1::HV, hv2::HV) where {HV <: AbstractHV} = bind(hv1, hv2)
 Base.bind(hvs::AbstractVector{HV}) where {HV <: AbstractHV} = prod(hvs)
 
 
-# SHIFTING
-# --------
-
+# Shifting / Permutation
 shift!(hv::AbstractHV, k = 1) = circshift!(hv.v, k)
 
 function shift(hv::AbstractHV, k = 1)
@@ -190,11 +188,8 @@ end
 ρ!(hv::AbstractHV, k = 1) = shift!(hv, k)
 
 
-# COMPARISON
-# ----------
-
+# Comparison
 Base.isequal(v::AbstractHV, u::AbstractHV) = v.v == u.v
-
 
 """
     Base.isapprox(u::AbstractHV, v::AbstractHV, atol=length(u)/100, ptol=0.01)
@@ -241,9 +236,7 @@ function Base.isapprox(u::T, v::T; ptol = 1.0e-10, N_bootstrap = 500) where {T <
 end
 
 
-# PERTURBATION
-# ------------
-
+# Perturbation
 function randbv(n::Int, m::Int)
     v = falses(n)  # empty vector
     v[1:m] .= true # set first m elements to 1
