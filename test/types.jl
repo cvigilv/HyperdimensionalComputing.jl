@@ -6,7 +6,7 @@ using Distributions, LinearAlgebra
 
 @testset "types" begin
     @testset "BipolarHV" begin
-        hdv = BipolarHV(; dims = n)
+        hdv = BipolarHV(; D = n)
 
         @test length(hdv) == n
         @test eltype(hdv) <: Int
@@ -20,7 +20,7 @@ using Distributions, LinearAlgebra
     end
 
     @testset "BinaryHV" begin
-        hdv = BinaryHV(; dims = n)
+        hdv = BinaryHV(; D = n)
 
         @test length(hdv) == n
         @test eltype(hdv) <: Bool
@@ -32,7 +32,7 @@ using Distributions, LinearAlgebra
     end
 
     @testset "TernaryHV" begin
-        hdv = TernaryHV(; dims = n)
+        hdv = TernaryHV(; D = n)
 
         @test length(hdv) == n
         @test eltype(hdv) <: Int
@@ -44,7 +44,7 @@ using Distributions, LinearAlgebra
     end
 
     @testset "GradedBipolarHV" begin
-        hdv = GradedBipolarHV(; dims = n)
+        hdv = GradedBipolarHV(; D = n)
 
         @test length(hdv) == n
         @test eltype(hdv) <: Real
@@ -56,7 +56,7 @@ using Distributions, LinearAlgebra
         #@test eltype(GradedBipolarHV(Float32, n)) <: Float32
         @test GradedBipolarHV(s) == GradedBipolarHV(; seed = hash_s)
 
-        @test GradedBipolarHV(; dims = n, distr = 2Beta(10, 2) - 1) isa GradedBipolarHV
+        @test GradedBipolarHV(; D = n, distr = 2Beta(10, 2) - 1) isa GradedBipolarHV
 
         hv2 = GradedBipolarHV([0.1, 1.12, -0.2, -3.0])
         normalize!(hv2)
@@ -65,7 +65,7 @@ using Distributions, LinearAlgebra
     end
 
     @testset "GradedHV" begin
-        hdv = GradedHV(; dims = n)
+        hdv = GradedHV(; D = n)
 
         @test length(hdv) == n
         @test eltype(hdv) <: Real
@@ -77,16 +77,15 @@ using Distributions, LinearAlgebra
         #@test eltype(GradedHV(Float32, n)) <: Float32
         @test GradedHV(s) == GradedHV(; seed = hash_s)
 
-        @test GradedHV(; dims = n, distr = Beta(10, 2)) isa GradedHV
+        @test GradedHV(; D = n, distr = Beta(10, 2)) isa GradedHV
 
         hv2 = GradedHV([0.1, 1.12, -0.2, -3.0])
         normalize!(hv2)
         @test all(0 .≤ hv2 .≤ 1)
     end
 
-
     @testset "RealHV" begin
-        hdv = RealHV(; dims = n)
+        hdv = RealHV(; D = n)
 
         @test length(hdv) == n
         @test eltype(hdv) <: Real
