@@ -4,6 +4,7 @@ types.jl
 Implements the basic types for the different hypervectors (wrappers for ordinary vectors)
 
 Contains:
+- AbstractHV
 - BinaryHV
 - BipolarHV
 - TernaryHV
@@ -17,8 +18,8 @@ Every hypervector HV has the following basic functionality
 
 TODO:
 - [ ] SparseHV
-- [ ] support for different types
 - [ ] complex HDC
+- [ ] support for different types
 =#
 
 # ----------------------------------------------------------------------------------- AbstractHV
@@ -27,7 +28,7 @@ abstract type AbstractHV{T} <: AbstractVector{T} end
 Base.copy(hv::HV) where {HV <: AbstractHV} = HV(copy(hv.v))
 Base.getindex(hv::AbstractHV, i) = hv.v[i]
 Base.hash(hv::AbstractHV) = hash(hv.v)
-Base.similar(hv::T) where {T <: AbstractHV} = T(; dims = length(hv))
+Base.similar(hv::T) where {T <: AbstractHV} = T(; D = length(hv))
 Base.size(hv::AbstractHV) = size(hv.v)
 Base.sum(hv::AbstractHV) = sum(hv.v)
 
@@ -41,26 +42,25 @@ empty_vector(hv::AbstractHV) = zero(hv.v)
 # ------------------------------------------------------------------------------------ BipolarHV
 struct BipolarHV <: AbstractHV{Int}
     v::BitVector
-
     BipolarHV(v::AbstractVector{Bool}) = new(v)
 end
 
 function BipolarHV(;
-        dims::Integer = 10_000,
+        D::Integer = 10_000,
         seed::Union{Number, Nothing} = nothing,
         rng = MersenneTwister
     )
     rng_instance = isnothing(seed) ? rng() : rng(seed)
-    return BipolarHV(bitrand(rng_instance, dims))
+    return BipolarHV(bitrand(rng_instance, D))
 end
 
 function BipolarHV(
-        s::Any;
-        dims::Integer = 10_000,
+        this::Any;
+        D::Integer = 10_000,
         rng = MersenneTwister
     )
-    rng_instance = rng(hash(s))
-    return BipolarHV(bitrand(rng_instance, dims))
+    rng_instance = rng(hash(this))
+    return BipolarHV(bitrand(rng_instance, D))
 end
 
 BipolarHV(v::AbstractVector{<:Integer}) = BipolarHV(v .> 0)
@@ -95,21 +95,21 @@ struct TernaryHV <: AbstractHV{Int}
 end
 
 function TernaryHV(;
-        dims::Integer = 10_000,
+        D::Integer = 10_000,
         seed::Union{Integer, Nothing} = nothing,
         rng = Random.MersenneTwister
     )
     rng_instance = isnothing(seed) ? rng() : rng(seed)
-    return TernaryHV(rand(rng_instance, (-1, 1), dims))
+    return TernaryHV(rand(rng_instance, (-1, 1), D))
 end
 
 function TernaryHV(
-        s::Any;
-        dims::Integer = 10_000,
+        this::Any;
+        D::Integer = 10_000,
         rng = Random.MersenneTwister
     )
-    rng_instance = rng(hash(s))
-    return TernaryHV(rand(rng_instance, (-1, 1), dims))
+    rng_instance = rng(hash(this))
+    return TernaryHV(rand(rng_instance, (-1, 1), D))
 end
 
 # Helpers
@@ -141,21 +141,21 @@ struct BinaryHV <: AbstractHV{Bool}
 end
 
 function BinaryHV(;
-        dims::Integer = 10_000,
+        D::Integer = 10_000,
         seed::Union{Integer, Nothing} = nothing,
         rng = Random.MersenneTwister
     )
     rng_instance = isnothing(seed) ? rng() : rng(seed)
-    return BinaryHV(bitrand(rng_instance, dims))
+    return BinaryHV(bitrand(rng_instance, D))
 end
 
 function BinaryHV(
-        s::Any;
-        dims::Integer = 10_000,
+        this::Any;
+        D::Integer = 10_000,
         rng = Random.MersenneTwister
     )
-    rng_instance = rng(hash(s))
-    return BinaryHV(bitrand(rng_instance, dims))
+    rng_instance = rng(hash(this))
+    return BinaryHV(bitrand(rng_instance, D))
 end
 
 # Helpers
@@ -176,27 +176,27 @@ end
 
 function RealHV(;
         distr::Distribution = eldist(RealHV),
-        dims::Integer = 10_000,
+        D::Integer = 10_000,
         seed::Union{Integer, Nothing} = nothing,
         rng = Random.MersenneTwister
     )
     rng_instance = isnothing(seed) ? rng() : rng(seed)
-    return RealHV(rand(rng_instance, distr, dims), distr)
+    return RealHV(rand(rng_instance, distr, D), distr)
 end
 
 function RealHV(
-        s::Any;
-        dims::Integer = 10_000,
+        this::Any;
+        D::Integer = 10_000,
         distr::Distribution = eldist(RealHV),
         rng = Random.MersenneTwister
     )
-    rng_instance = rng(hash(s))
-    return RealHV(rand(rng_instance, distr, dims), distr)
+    rng_instance = rng(hash(this))
+    return RealHV(rand(rng_instance, distr, D), distr)
 end
 
 # Helpers
 Base.copy(hv::RealHV) = RealHV(copy(hv.v), hv.distr)
-Base.similar(hv::RealHV) = RealHV(; dims = length(hv), distr = hv.distr)
+Base.similar(hv::RealHV) = RealHV(; D = length(hv), distr = hv.distr)
 function normalize!(hv::RealHV)
     hv.v .*= std(hv.distr) / std(hv.v)
     return hv
@@ -216,30 +216,30 @@ struct GradedHV{T <: Real} <: AbstractHV{T}
 end
 
 function GradedHV(;
-        dims::Integer = 10_000,
+        D::Integer = 10_000,
         distr::Distribution = eldist(GradedHV),
         seed::Union{Integer, Nothing} = nothing,
         rng = Random.MersenneTwister
     )
     @assert 0 ≤ minimum(distr) < maximum(distr) ≤ 1 "Provide `distr` with support in [0,1]"
     rng_instance = isnothing(seed) ? rng() : rng(seed)
-    return GradedHV(rand(rng_instance, distr, dims), distr)
+    return GradedHV(rand(rng_instance, distr, D), distr)
 end
 
 function GradedHV(
-        s::Any;
-        dims::Integer = 10_000,
+        this::Any;
+        D::Integer = 10_000,
         distr::Distribution = eldist(GradedHV),
         rng = Random.MersenneTwister
     )
     @assert 0 ≤ minimum(distr) < maximum(distr) ≤ 1 "Provide `distr` with support in [0,1]"
-    rng_instance = rng(hash(s))
-    return GradedHV(rand(rng_instance, distr, dims), distr)
+    rng_instance = rng(hash(this))
+    return GradedHV(rand(rng_instance, distr, D), distr)
 end
 
 # Helpers
 Base.copy(hv::GradedHV) = GradedHV(copy(hv.v), hv.distr)
-Base.similar(hv::GradedHV) = GradedHV(; dims = length(hv), distr = eldist(GradedHV))
+Base.similar(hv::GradedHV) = GradedHV(; D = length(hv), distr = eldist(GradedHV))
 Base.zeros(hv::GradedHV) = fill!(similar(hv.v), one(eltype(hv.v)) / 2)
 LinearAlgebra.normalize!(hv::GradedHV) = clamp!(hv.v, 0, 1)
 eldist(::Type{<:GradedHV}) = Beta(1, 1)
@@ -258,30 +258,30 @@ struct GradedBipolarHV{T <: Real} <: AbstractHV{T}
 end
 
 function GradedBipolarHV(;
-        dims::Integer = 10_000,
+        D::Integer = 10_000,
         distr::Distribution = eldist(GradedBipolarHV),
         seed::Union{Integer, Nothing} = nothing,
         rng = Random.MersenneTwister
     )
     @assert -1 ≤ minimum(distr) < maximum(distr) ≤ 1 "Provide `distr` with support in [-1,1]"
     rng_instance = isnothing(seed) ? rng() : rng(seed)
-    return GradedBipolarHV(rand(rng_instance, distr, dims), distr)
+    return GradedBipolarHV(rand(rng_instance, distr, D), distr)
 end
 
 function GradedBipolarHV(
-        s::Any;
-        dims::Integer = 10_000,
+        this::Any;
+        D::Integer = 10_000,
         distr::Distribution = eldist(GradedBipolarHV),
         rng = Random.MersenneTwister
     )
     @assert -1 ≤ minimum(distr) < maximum(distr) ≤ 1 "Provide `distr` with support in [-1,1]"
-    rng_instance = rng(hash(s))
-    return GradedBipolarHV(rand(rng_instance, distr, dims), distr)
+    rng_instance = rng(hash(this))
+    return GradedBipolarHV(rand(rng_instance, distr, D), distr)
 end
 
 # Helpers
 Base.copy(hv::GradedBipolarHV) = GradedBipolarHV(copy(hv.v), hv.distr)
-Base.similar(hv::GradedBipolarHV) = GradedBipolarHV(; dims = length(hv), distr = hv.distr)
+Base.similar(hv::GradedBipolarHV) = GradedBipolarHV(; D = length(hv), distr = hv.distr)
 LinearAlgebra.normalize!(hv::GradedBipolarHV) = clamp!(hv.v, -1, 1)
 eldist(::Type{<:GradedBipolarHV}) = 2Beta(1, 1) - 1
 

@@ -13,8 +13,8 @@ using LinearAlgebra, Random
 
         @testset "operations $HV" begin
 
-            hv1 = HV(; dims = N)
-            hv2 = HV(; dims = N)
+            hv1 = HV(; D = N)
+            hv2 = HV(; D = N)
 
             v1 = collect(hv1)
             v2 = collect(hv2)
@@ -56,9 +56,9 @@ using LinearAlgebra, Random
 
             @testset "similarity $HV" begin
                 N = 10_000
-                hv1 = HV(; dims = N)
-                hv2 = HV(; dims = N)
-                hv3 = HV(; dims = N) + hv1  # similar to 1 but not to 2
+                hv1 = HV(; D = N)
+                hv2 = HV(; D = N)
+                hv3 = HV(; D = N) + hv1  # similar to 1 but not to 2
                 normalize!(hv3)
 
                 @test !(hv1 ≈ hv2)
