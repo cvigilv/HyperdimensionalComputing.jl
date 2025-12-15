@@ -53,7 +53,7 @@ function Base.show(io::IO, ::MIME"text/plain", hv::AbstractHV)
     # 1) show summary before setting :compact
     if typeof(hv) == BinaryHV
         counts = Dict(e => count(==(e), hv) for e in unique(hv))
-        print(io, "$(length(hv))-element $(typeof(hv)) with $(counts[1]) true and $(counts[-1]) false")
+        print(io, "$(length(hv))-element $(typeof(hv)) with $(counts[true]) true and $(counts[false]) false")
     elseif typeof(hv) == BipolarHV
         counts = Dict(e => count(==(e), hv) for e in unique(hv))
         print(io, "$(length(hv))-element $(typeof(hv)) with $(counts[1]) positives and $(counts[-1]) negatives")
