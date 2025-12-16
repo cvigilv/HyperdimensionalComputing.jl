@@ -493,7 +493,7 @@ end
 
 """
 	level(v::HV, n::Int) where {HV <: AbstractHV}
-	level(HV::Type{<:AbstractHV}, n::Int; dims::Int = 10_000)
+	level(HV::Type{<:AbstractHV}, n::Int; D::Int = 10_000)
 
 Creates a set of level correlated hypervectors, where the first and last hypervectors are quasi-orthogonal.
 
@@ -511,7 +511,7 @@ function level(v::HV, n::Int) where {HV <: AbstractHV}
     return hvs
 end
 
-level(HV::Type{<:AbstractHV}, n::Int; dims::Int = 10_000) = level(HV(dims), n)
+level(HV::Type{<:AbstractHV}, n::Int; D::Int = 10_000) = level(HV(; D = D), n)
 
 level(HVv, vals::AbstractVector) = level(HVv, length(vals))
 level(HVv, vals::UnitRange) = level(HVv, length(vals))
