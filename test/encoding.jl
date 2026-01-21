@@ -37,7 +37,8 @@
     end
 
     @testset "ngrams" begin
-        @test ngrams(hvs) == Bool.([0, 1, 0, 0, 1])
+        @test ngrams(hvs).v == Bool.([0, 1, 0, 0, 1])
+        @test ngrams(hvs) == bundle([hvs[1] * ρ(hvs[2]) * ρ(hvs[3], 2), hvs[2] * ρ(hvs[3]) * ρ(hvs[4], 2), hvs[3] * ρ(hvs[4]) * ρ(hvs[5], 2)])
         @test_throws AssertionError ngrams(hvs, 0)
         @test_throws AssertionError ngrams(hvs, length(hvs) + 1)
     end

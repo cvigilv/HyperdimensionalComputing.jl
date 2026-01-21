@@ -437,13 +437,15 @@ and shift operations.
 # References
 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.ngrams.html)
-
 """
 function ngrams(vs::AbstractVector{<:AbstractHV}, n::Int = 3)
     l = length(vs)
     p = l - n + 1
     @assert 1 <= n <= length(vs) "`n` must be 1 ≤ n ≤ $l"
-    return bundle([bind([shift(vs[i + j], j) for j in 0:(n - 1)]) for i in 1:p])
+    return map(
+        s -> bindsequence(s),
+        (vs[f:(f + (n - 1))] for f in 1:p)
+    ) |> multiset
 end
 
 """
