@@ -237,45 +237,44 @@ end
 
 
 # Perturbation
-function randbv(n::Int, m::Int)
-    v = falses(n)  # empty vector
-    v[1:m] .= true # set first m elements to 1
-    return shuffle!(v)
+function randbv(n::Int, m::Int; rng::AbstractRNG = Random.GLOBAL_RNG)
+    v = falses(n)
+    v[1:m] .= true
+    return shuffle!(rng, v)
 end
 
-function randbv(n::Int, p::Number)
+function randbv(n::Int, p::Number; rng::AbstractRNG = Random.GLOBAL_RNG)
     @assert 0 ≤ p ≤ 1 "p should be a valid probability"
-    return randbv(n, round(Int, p * n))
+    return randbv(n, round(Int, p * n); rng = rng)
 end
 
-function randbv(n::Int, I)
+function randbv(n::Int, I; rng::AbstractRNG = Random.GLOBAL_RNG)
     v = falses(n)
     v[I] .= true
     return v
 end
 
-
-function perturbate!(::Type{HVByteVec}, hv::HV, I, dist = eldist(hv)) where {HV <: AbstractHV}
-    hv.v[I] .= rand(dist, length(I))
+function perturbate!(::Type{HVByteVec}, hv::HV, I, dist = eldist(hv); rng::AbstractRNG = Random.GLOBAL_RNG) where {HV <: AbstractHV}
+    hv.v[I] .= rand(rng, dist, length(I))
     return hv
 end
 
-function perturbate!(::Type{HVByteVec}, hv::HV, M::BitVector, dist = eldist(hv)) where {HV <: AbstractHV}
-    hv.v[M] .= rand(dist, sum(M))
+function perturbate!(::Type{HVByteVec}, hv::HV, M::BitVector, dist = eldist(hv); rng::AbstractRNG = Random.GLOBAL_RNG) where {HV <: AbstractHV}
+    hv.v[M] .= rand(rng, dist, sum(M))
     return hv
 end
 
-function perturbate!(::Type{HVByteVec}, hv::HV, p::Number, args...) where {HV <: AbstractHV}
-    return perturbate!(hv, randbv(length(hv), p), args...)
+function perturbate!(::Type{HVByteVec}, hv::HV, p::Number, args...; rng::AbstractRNG = Random.GLOBAL_RNG) where {HV <: AbstractHV}
+    return perturbate!(hv, randbv(length(hv), p; rng = rng), args...; rng = rng)
 end
 
-function perturbate!(::Type{HVBitVec}, hv::AbstractHV, binargs)
+function perturbate!(::Type{HVBitVec}, hv::AbstractHV, binargs; rng::AbstractRNG = Random.GLOBAL_RNG)
     n = length(hv)
-    M = randbv(n, binargs)  # turn whatever into a mask
+    M = randbv(n, binargs; rng = rng)
     hv.v .⊻= M
     return hv
 end
 
-perturbate!(hv, args...) = perturbate!(vectype(hv), hv, args...)
+perturbate!(hv, args...; rng::AbstractRNG = Random.GLOBAL_RNG) = perturbate!(vectype(hv), hv, args...; rng = rng)
 
-perturbate(hv::AbstractHV, args...; kwargs...) = perturbate!(copy(hv), args...; kwargs...)
+perturbate(hv::AbstractHV, args...; rng::AbstractRNG = Random.GLOBAL_RNG, kwargs...) = perturbate!(copy(hv), args...; rng = rng, kwargs...)
