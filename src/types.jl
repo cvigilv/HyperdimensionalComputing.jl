@@ -28,7 +28,7 @@ abstract type AbstractHV{T} <: AbstractVector{T} end
 Base.copy(hv::HV) where {HV <: AbstractHV} = HV(copy(hv.v))
 Base.getindex(hv::AbstractHV, i) = hv.v[i]
 Base.hash(hv::AbstractHV) = hash(hv.v)
-Base.similar(hv::T) where {T <: AbstractHV} = T(; D = length(hv))
+Base.similar(hv::HV) where {HV <: AbstractHV} = HV(; D = length(hv))
 Base.size(hv::AbstractHV) = size(hv.v)
 Base.sum(hv::AbstractHV) = sum(hv.v)
 
@@ -285,6 +285,30 @@ Base.similar(hv::GradedBipolarHV) = GradedBipolarHV(; D = length(hv), distr = hv
 LinearAlgebra.normalize!(hv::GradedBipolarHV) = clamp!(hv.v, -1, 1)
 eldist(::Type{<:GradedBipolarHV}) = 2Beta(1, 1) - 1
 
+# Fourier Holographically Reduced Represenetations
+# ------------------------------------------------
+
+struct FHRR{T <: Complex} <: AbstractHV{T}
+    v::Vector{T}
+end
+
+#Base.eltype(::FHRR{T}) where {T} = Complex{T}
+
+FHRR(n::Int = 10_000) = FHRR(exp.(2π * im .* rand(n)))
+FHRR(T::Type, n::Int = 10_000) = FHRR(exp.(2π * im .* rand(T, n)))
+
+Base.similar(hv::FHRR{<:Complex{R}}) where {R} = FHRR(exp.(2π * im .* rand(R, length(hv))))
+
+"""
+    LinearAlgebra.normalize!(hv::FHRR)
+
+A Fourier Holographically Reduced Represenetation is normalized by
+setting the norm of each complex element to 1.
+"""
+function LinearAlgebra.normalize!(hv::FHRR)
+    hv.v ./= abs.(hv.v)
+    return hv
+end
 
 # ---------------------------------------------------------------------------------------  Traits
 abstract type HVTraits end
