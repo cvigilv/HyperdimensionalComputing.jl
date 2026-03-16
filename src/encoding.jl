@@ -437,13 +437,15 @@ and shift operations.
 # References
 
 - [Torchhd documentation](https://torchhd.readthedocs.io/en/stable/generated/torchhd.ngrams.html)
-
 """
 function ngrams(vs::AbstractVector{<:AbstractHV}, n::Int = 3)
     l = length(vs)
     p = l - n + 1
     @assert 1 <= n <= length(vs) "`n` must be 1 ≤ n ≤ $l"
-    return bundle([bind([shift(vs[i + j], j) for j in 0:(n - 1)]) for i in 1:p])
+    return map(
+        s -> bindsequence(s),
+        (vs[f:(f + (n - 1))] for f in 1:p)
+    ) |> multiset
 end
 
 """
@@ -493,7 +495,7 @@ end
 
 """
 	level(v::HV, n::Int) where {HV <: AbstractHV}
-	level(HV::Type{<:AbstractHV}, n::Int; dims::Int = 10_000)
+	level(HV::Type{<:AbstractHV}, n::Int; D::Int = 10_000)
 
 Creates a set of level correlated hypervectors, where the first and last hypervectors are quasi-orthogonal.
 
@@ -511,7 +513,7 @@ function level(v::HV, n::Int) where {HV <: AbstractHV}
     return hvs
 end
 
-level(HV::Type{<:AbstractHV}, n::Int; dims::Int = 10_000) = level(HV(dims), n)
+level(HV::Type{<:AbstractHV}, n::Int; D::Int = 10_000) = level(HV(; D = D), n)
 
 level(HVv, vals::AbstractVector) = level(HVv, length(vals))
 level(HVv, vals::UnitRange) = level(HVv, length(vals))
