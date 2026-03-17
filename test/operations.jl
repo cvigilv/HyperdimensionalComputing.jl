@@ -72,4 +72,22 @@ using LinearAlgebra, Random
             end
         end
     end
+
+    @testset "FHRR" begin
+        hv1 = FHRR(; D = n)
+        hv2 = FHRR(; D = n)
+
+        @test bundle([hv1, hv2]) isa FHRR
+        @test hv1 + hv2 isa FHRR
+        @test bind([hv1, hv2]) isa FHRR
+        @test norm(bind([hv1, hv2])) ≈ sqrt(n)
+
+        @test shift(hv1, 2) isa FHRR
+
+        @test similarity(hv1, hv2) < 0.5
+        @test similarity(hv2, hv2) ≈ 1
+
+        @test norm(hv1^3) ≈ sqrt(n)
+    end
+
 end
