@@ -5,44 +5,31 @@ and a custom plotting recipe
 See ext/UnicodePlotting.jl for extensions based on UnicodePlotting
 =#
 
-# ------------------------------------------------------------------------------------- Compact
-# function Base.show(io::IO, hv::TernaryHV)
-#     return print(io, "$(typeof(hv))(D=$(length(hv)), μ=$(round(mean(hv))), σ=$(round(std(hv))))")
-# end
-#
-# function Base.show(io::IO, hv::BinaryHV)
-#     D = length(hv.v)
-#     n_true = count(identity, hv.v)
-#     n_false = D - n_true
-#     return print(io, "BinaryHV(D=$(D), trues=$(n_true), falses=$(n_false))")
-# end
-#
-# function Base.show(io::IO, hv::BipolarHV)
-#     D = length(hv.v)
-#     n_true = count(identity, hv.v)
-#     n_false = D - n_true
-#     print(io, "BipolarHV(D=$(D), positives=$(n_true), negatives=$(n_false))")
-#     return
-# end
-#
-# # ------------------------------------------------------------------------------------- REPL
-# function Base.show(io::IO, mime::MIME"text/plain", hv::TernaryHV)
-#     println(io, "$(length(hv))-element $(typeof(hv)) with μ ± σ = $(round(mean(hv), digits = 3)) ± $(round(std(hv), digits = 3))")
-#     println(repr(mime, hv.v'; context=io))
-#     # return split(repr(mime, hv.v; context = io), '\n')[2:end] .|> println
-# end
-#
-# function Base.show(io::IO, mime::MIME"text/plain", hv::BinaryHV)
-#     counts = Dict(e => count(==(e), hv) for e in unique(hv))
-#     println(io, "$(length(hv))-element $(typeof(hv)) with $(counts[1]) trues and $(counts[0]) falses")
-#     return split(repr(mime, hv.v; context = io), '\n')[(begin + 1):end] .|> println
-# end
-#
-# function Base.show(io::IO, mime::MIME"text/plain", hv::BipolarHV)
-#     counts = Dict(e => count(==(e), hv) for e in unique(hv))
-#     println(io, "$(length(hv))-element $(typeof(hv)) with $(counts[1]) positives and $(counts[-1]) negatives")
-#     return split(repr(mime, hv.v .* 2 .- 1; context = io), '\n')[(begin + 1):end] .|> println
-# end
+function Base.show(io::IO, ::MIME"text/plain", hvs::AbstractVector{<:AbstractHV})
+    println(io, "$(length(hvs))-element $(typeof(hvs)):")
+    r = map(hvs) do hv
+        if typeof(hv) == BinaryHV
+            counts = Dict(e => count(==(e), hv) for e in unique(hv))
+            " $(length(hv))-element $(typeof(hv)) with $(counts[true]) true and $(counts[false]) false"
+        elseif typeof(hv) == BipolarHV
+            counts = Dict(e => count(==(e), hv) for e in unique(hv))
+            " $(length(hv))-element $(typeof(hv)) with $(counts[1]) positives and $(counts[-1]) negatives"
+        elseif typeof(hv) == TernaryHV
+            counts = Dict(1 => count(>=(1), hv), -1 => count(<=(-1), hv), 0 => count(==(0), hv))
+            " $(length(hv))-element $(typeof(hv)) with $(counts[1]) positives, $(counts[0]) zeros, and $(counts[-1]) negatives"
+        else
+            " $(length(hv))-element $(typeof(hv)) with μ ± σ = $(round(mean(hv), digits = 3)) ± $(round(std(hv), digits = 3))"
+        end
+    end
+
+    if length(r) <= displaysize(io)[1] - 4
+        return print(io, join(r, '\n'))
+    end
+
+    chunksize = displaysize(io)[1] ÷ 2 - 3
+    return print(io, join([first(r, chunksize); " ⋮"; last(r, chunksize)], '\n'))
+end
+
 function Base.show(io::IO, ::MIME"text/plain", hv::AbstractHV)
     # NOTE: Based off https://github.com/JuliaLang/julia/blob/cf40898d56a5b32c6a2e97f61355440df36a7357/base/arrayshow.jl#L363
     # Fast return for empty hypervectors
@@ -57,10 +44,13 @@ function Base.show(io::IO, ::MIME"text/plain", hv::AbstractHV)
     elseif typeof(hv) == BipolarHV
         counts = Dict(e => count(==(e), hv) for e in unique(hv))
         print(io, "$(length(hv))-element $(typeof(hv)) with $(counts[1]) positives and $(counts[-1]) negatives")
+    elseif typeof(hv) == TernaryHV
+        counts = Dict(1 => count(>=(1), hv), -1 => count(<=(-1), hv), 0 => count(==(0), hv))
+        print(io, "$(length(hv))-element $(typeof(hv)) with $(counts[1]) positives, $(counts[0]) zeros, and $(counts[-1]) negatives")
     else
         print(io, "$(length(hv))-element $(typeof(hv)) with μ ± σ = $(round(mean(hv), digits = 3)) ± $(round(std(hv), digits = 3))")
     end
-    isempty(hv) && return
+
     print(io, ":")
 
     # 2) compute new IOContext
