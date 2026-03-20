@@ -49,6 +49,9 @@ using LinearAlgebra, Random
                 hvp = perturbate(hv2, m)
                 @test hv2.v[m] != hvp.v[m]
                 @test hv2.v[.!m] ≈ hvp.v[.!m]
+
+                @test perturbate(hv1, 0.1, rng = MersenneTwister(1)) == perturbate(hv1, 0.1, rng = MersenneTwister(1))
+                @test perturbate(hv1, 0.1, rng = MersenneTwister(1)) != perturbate(hv1, 0.1, rng = MersenneTwister(2))
             end
 
             # currently not yet a good way of evaluating these
