@@ -88,11 +88,17 @@ Represents a hypervector with elements in `(-1, 1)`.
 
 - Gayler, R. W. (1998). Multiplicative Binding, Representation Operators & Analogy. In Advances in Analogy Research: Integration of Theory and Data from the Cognitive, Computational, and Neural Sciences, pages 1–4.
 """
-struct TernaryHV <: AbstractHV{Int}
-    v::Vector{Int}
+struct TernaryHV{T <: Integer} <: AbstractHV{T}
+    v::Vector{T}
 
-    TernaryHV(v::AbstractVector{<:Integer}) = new(v)
+    # Inner constructor for same type
+    TernaryHV{T}(v::AbstractVector{T}) where {T <: Integer} = new{T}(v)
+    # Inner constructor for type conversion
+    TernaryHV{T}(v::AbstractVector{<:Integer}) where {T <: Integer} = new{T}(convert(Vector{T}, v))
 end
+
+# Outer constructor that infers type from input
+TernaryHV(v::AbstractVector{T}) where {T <: Integer} = TernaryHV{T}(v)
 
 function TernaryHV(;
         D::Integer = 10_000,
@@ -100,7 +106,7 @@ function TernaryHV(;
         rng = Random.MersenneTwister
     )
     rng_instance = isnothing(seed) ? rng() : rng(seed)
-    return TernaryHV(rand(rng_instance, (-1, 1), D))
+    return TernaryHV{Int}(rand(rng_instance, (-1, 1), D))
 end
 
 function TernaryHV(
@@ -109,13 +115,37 @@ function TernaryHV(
         rng = Random.MersenneTwister
     )
     rng_instance = rng(hash(this))
-    return TernaryHV(rand(rng_instance, (-1, 1), D))
+    return TernaryHV{Int}(rand(rng_instance, (-1, 1), D))
+end
+
+# Support automatic type conversion for integer vectors
+# Removed redundant constructor - the struct inner constructor handles this
+
+# Type-specific constructors
+function TernaryHV{T}(;
+        D::Integer = 10_000,
+        seed::Union{Integer, Nothing} = nothing,
+        rng = Random.MersenneTwister
+    ) where {T <: Integer}
+    rng_instance = isnothing(seed) ? rng() : rng(seed)
+    return TernaryHV{T}(convert(Vector{T}, rand(rng_instance, (-1, 1), D)))
+end
+
+function TernaryHV{T}(
+        this::Any;
+        D::Integer = 10_000,
+        rng = Random.MersenneTwister
+    ) where {T <: Integer}
+    rng_instance = rng(hash(this))
+    return TernaryHV{T}(convert(Vector{T}, rand(rng_instance, (-1, 1), D)))
 end
 
 # Helpers
-LinearAlgebra.normalize!(hv::TernaryHV) = clamp!(hv.v, -1, 1)
-LinearAlgebra.normalize(hv::TernaryHV) = TernaryHV(clamp.(hv, -1, 1))
-eldist(::Type{TernaryHV}) = 2Bernoulli(0.5) - 1
+Base.copy(hv::TernaryHV{T}) where {T} = TernaryHV{T}(copy(hv.v))
+Base.similar(hv::TernaryHV{T}) where {T} = TernaryHV{T}(; D = length(hv))
+LinearAlgebra.normalize!(hv::TernaryHV) = (clamp!(hv.v, -1, 1); hv)
+LinearAlgebra.normalize(hv::TernaryHV{T}) where {T} = TernaryHV{T}(clamp.(hv.v, -1, 1))
+eldist(::Type{<:TernaryHV}) = 2Bernoulli(0.5) - 1
 # ------------------------------------------------------------------------------------ BinaryHV
 """
     BinaryHV
