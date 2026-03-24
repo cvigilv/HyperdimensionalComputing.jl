@@ -18,8 +18,6 @@ Every hypervector HV has the following basic functionality
 
 TODO:
 - [ ] SparseHV
-- [ ] complex HDC
-- [ ] support for different types
 =#
 
 # ----------------------------------------------------------------------------------- AbstractHV
@@ -47,7 +45,7 @@ end
 
 function BipolarHV(;
         D::Integer = 10_000,
-        seed::Union{Number, Nothing} = nothing,
+        seed::Union{Integer, Nothing} = nothing,
         rng = MersenneTwister
     )
     rng_instance = isnothing(seed) ? rng() : rng(seed)
@@ -80,7 +78,7 @@ eldist(::Type{BipolarHV}) = 2Bernoulli(0.5) - 1
 A ternary hypervector type based on the Multiply-Add-Permute (MAP) vector symbolic architecture
 (Gayler, 1998).
 
-Represents a hypervector with elements in `(-1, 1)`.
+Represents a hypervector with elements in `{-1, +1}`.
 
 # Extended help
 
@@ -116,11 +114,12 @@ end
 LinearAlgebra.normalize!(hv::TernaryHV) = clamp!(hv.v, -1, 1)
 LinearAlgebra.normalize(hv::TernaryHV) = TernaryHV(clamp.(hv, -1, 1))
 eldist(::Type{TernaryHV}) = 2Bernoulli(0.5) - 1
+
 # ------------------------------------------------------------------------------------ BinaryHV
 """
     BinaryHV
 
-A ternary hypervector type based on the Binary Splatter Code (BSC) vector symbolic architecture
+A binary hypervector type based on the Binary Spatter Code (BSC) vector symbolic architecture
 (Kanerva, 1994; Kanerva, 1995; Kanerva, 1996; Kanerva, 1997).
 
 Represents a hypervector boolean elements, i.e. `(false, true)`.
@@ -239,7 +238,7 @@ end
 
 # Helpers
 Base.copy(hv::GradedHV) = GradedHV(copy(hv.v), hv.distr)
-Base.similar(hv::GradedHV) = GradedHV(; D = length(hv), distr = eldist(GradedHV))
+Base.similar(hv::GradedHV) = GradedHV(; D = length(hv), distr = hv.distr)
 Base.zeros(hv::GradedHV) = fill!(similar(hv.v), one(eltype(hv.v)) / 2)
 LinearAlgebra.normalize!(hv::GradedHV) = clamp!(hv.v, 0, 1)
 eldist(::Type{<:GradedHV}) = Beta(1, 1)
@@ -285,8 +284,8 @@ Base.similar(hv::GradedBipolarHV) = GradedBipolarHV(; D = length(hv), distr = hv
 LinearAlgebra.normalize!(hv::GradedBipolarHV) = clamp!(hv.v, -1, 1)
 eldist(::Type{<:GradedBipolarHV}) = 2Beta(1, 1) - 1
 
-# Fourier Holographically Reduced Represenetations
-# ------------------------------------------------
+# Fourier Holographic Reduced Representations
+# --------------------------------------------
 
 struct FHRR{T <: Complex} <: AbstractHV{T}
     v::Vector{T}
@@ -311,7 +310,7 @@ Base.similar(hv::FHRR{<:Complex{R}}) where {R} = FHRR(exp.(2π * im .* rand(R, l
 """
     LinearAlgebra.normalize!(hv::FHRR)
 
-A Fourier Holographically Reduced Represenetation is normalized by
+A Fourier Holographic Reduced Representation is normalized by
 setting the norm of each complex element to 1.
 """
 function LinearAlgebra.normalize!(hv::FHRR)

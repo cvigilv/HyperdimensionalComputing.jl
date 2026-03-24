@@ -1,4 +1,3 @@
-using Handcalcs #hide
 
 # # Introduction
 #
@@ -64,7 +63,7 @@ h₃ = BipolarHV(; D = 8);
 # ## Bundling
 #
 # Bundling (also known as superposition) combines multiple hypervectors to create a new hypervector
-# that is similar to it's constituyents.
+# that is similar to it's constituents.
 #
 # $$u = [h_1 + h_2 + h_3]$$
 #
@@ -86,7 +85,7 @@ bundle([h₁, h₂, h₃])
 
 h₁ + h₂ + h₃
 
-# This operation generates a hypervector that is similar to all it's contituyent hypervectors,
+# This operation generates a hypervector that is similar to all it's constituent hypervectors,
 # such that
 #
 # $$h₁ \sim u, h₂ \sim u, h₃ \sim u$$
@@ -97,7 +96,7 @@ h₁ + h₂ + h₃
 # ## Binding
 #
 # Binding combines multiple hypervectors to create a new hypervector that is dissimilar to it's
-# constituyents, such that:
+# constituents, such that:
 #
 # $$v = [h₁ \times h₂ \times h₃]$$
 #
@@ -111,7 +110,7 @@ bind([h₁, h₂, h₃])
 
 h₁ * h₂ * h₃
 
-# This operation generates a hypervector that is similar to all it's contituyent hypervectors,
+# This operation generates a hypervector that is similar to all it's constituent hypervectors,
 # such that
 #
 # $$h₁ \nsim v, h₂ \nsim v, h₃ \nsim v$$
