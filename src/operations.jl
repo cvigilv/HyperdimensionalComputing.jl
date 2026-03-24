@@ -2,8 +2,6 @@
 operations.jl; This file implements operations that can be done on hypervectors to enable them to encode text-based data.
 =#
 
-# Remark: use element-wise reduce, maybe using LazyArrays?
-
 #=
 
 | Operation            | symbol | remark                                                                                                          |
@@ -219,7 +217,7 @@ Base.isequal(v::AbstractHV, u::AbstractHV) = v.v == u.v
 """
     Base.isapprox(u::AbstractHV, v::AbstractHV, atol=length(u)/100, ptol=0.01)
 
-Measurures when two hypervectors are similar (have more elements in common than expected
+Measures when two hypervectors are similar (have more elements in common than expected
 by chance).
 
 One can specify either:
@@ -239,12 +237,12 @@ end
 """
     Base.isapprox(u::AbstractHV, v::AbstractHV, atol=length(u)/100, ptol=0.01)
 
-Measurures when two hypervectors are similar (have more elements in common than expected
+Measures when two hypervectors are similar (have more elements in common than expected
 by chance) using the Hamming distance. Uses a bootstrap to construct a null distribution.
 
 One can specify either:
 - `ptol=1e-10` threshold for seeing that many matches due to chance
-- `N_bootstap=200` number of samples for bootstrapping
+- `N_bootstrap=200` number of samples for bootstrapping
 """
 function Base.isapprox(u::T, v::T; ptol = 1.0e-10, N_bootstrap = 500) where {T <: AbstractHV}
     @assert length(u) == length(v) "Vectors have to be of equal length"
