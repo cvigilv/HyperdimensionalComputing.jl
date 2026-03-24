@@ -1,4 +1,3 @@
-
 # # Introduction
 #
 # Hyperdimensional Computing (HDC) is a brain-inspired computational paradigm that represents
